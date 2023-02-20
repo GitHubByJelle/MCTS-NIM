@@ -14,7 +14,7 @@ import search.mcts.playout.RandomPlayout;
  * MCTS search algorithm using neural networks with Implicit UCT, no play-outs, while
  * backpropagating the estimated value by the network, and robust child.
  */
-public class ImplicitMCTSNNNP48 extends MCTS {
+public class MCTS_base extends MCTS {
 
     //-------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ public class ImplicitMCTSNNNP48 extends MCTS {
      * (influence estimated value = 0.8, exploration=0.0001, QInit=PARENT, 4 threads)
      * @param pathName Path to the desired neural network
      */
-    public ImplicitMCTSNNNP48(String pathName) {
+    public MCTS_base(String pathName) {
         super(new ImplicitUCT(.8, .0001f),
                 new RandomPlayout(0),
                 new InitialNoPlayoutTerminationBackprop(),
@@ -47,7 +47,7 @@ public class ImplicitMCTSNNNP48 extends MCTS {
      * @param alpha influence of the estimated value
      * @param explorationConstant exploration constant
      */
-    public ImplicitMCTSNNNP48(String pathName, float alpha, float explorationConstant) {
+    public MCTS_base(String pathName, float alpha, float explorationConstant) {
         super(new ImplicitUCT(alpha, explorationConstant), new RandomPlayout(0),
                 new FixedEarlyTerminationBackprop(), new RobustChild());
 
