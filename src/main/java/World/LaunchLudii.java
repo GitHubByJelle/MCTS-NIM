@@ -1,6 +1,7 @@
 package World;
 
 import Agents.*;
+import Agents.TestAgent.*;
 import app.StartDesktopApp;
 import manager.ai.AIRegistry;
 

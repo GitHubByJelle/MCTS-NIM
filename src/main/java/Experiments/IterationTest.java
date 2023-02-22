@@ -29,19 +29,19 @@ public class IterationTest {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // Initialise used bots (Please note, they should print the number of iterations)
 //        String[] bots = new String[]{
-//                "Agents.ImplicitMCTSNNNP",
-//                "Agents.ImplicitMCTSNNNP3",
-//                "Agents.ImplicitMCTSNNFET",
-//                "Agents.ImplicitMCTSNNFET2",
+//                "Agents.TestAgent.ImplicitMCTSNNNP",
+//                "Agents.TestAgent.ImplicitMCTSNNNP3",
+//                "Agents.TestAgent.ImplicitMCTSNNFET",
+//                "Agents.TestAgent.ImplicitMCTSNNFET2",
 //                "Agents.ImplicitMCTSNNNPTT",
-//                "Agents.ImplicitMCTSNNP",
-//                "Agents.ImplicitMCTSNNP2",
+//                "Agents.TestAgent.ImplicitMCTSNNP",
+//                "Agents.TestAgent.ImplicitMCTSNNP2",
 //                "Agents.UBFMNNCompleted"
 //        };
 
         String[] bots = new String[]{
                 "Agents.AlphaBetaSearchHF",
-                "Agents.MCTSTest.MCTS_ProgressiveBias_MAST"
+                "Agents.TestAgent.MCTS_ProgressiveBias_MAST"
         };
 
         // Run all bots N times on the initial board position of the given game

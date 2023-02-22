@@ -1,6 +1,6 @@
 package Training;
 
-import Agents.MCTSTraining;
+import Agents.TestAgent.MCTSTraining;
 import Agents.NNBot;
 import Agents.RandomAI;
 import Evaluator.ClassicTerminalStateEvaluator;

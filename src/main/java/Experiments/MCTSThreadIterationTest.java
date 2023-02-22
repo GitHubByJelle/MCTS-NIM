@@ -30,23 +30,23 @@ public class MCTSThreadIterationTest {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // Initialise used MCTS bots (Please note, they should use the IterationWrapper)
 //        String[] bots = new String[]{
-//                "Agents.ImplicitMCTSNNNP",
-//                "Agents.ImplicitMCTSNNNP3",
-//                "Agents.ImplicitMCTSNNFET",
-//                "Agents.ImplicitMCTSNNFET2",
+//                "Agents.TestAgent.ImplicitMCTSNNNP",
+//                "Agents.TestAgent.ImplicitMCTSNNNP3",
+//                "Agents.TestAgent.ImplicitMCTSNNFET",
+//                "Agents.TestAgent.ImplicitMCTSNNFET2",
 //                "Agents.ImplicitMCTSNNNPTT",
-//                "Agents.ImplicitMCTSNNP",
-//                "Agents.ImplicitMCTSNNP2"
+//                "Agents.TestAgent.ImplicitMCTSNNP",
+//                "Agents.TestAgent.ImplicitMCTSNNP2"
 //        };
 
 //        String[] bots = new String[]{
-//                "Agents.ImplicitMCTSNNNP8",
-//                "Agents.ImplicitMCTSNNNP10",
+//                "Agents.TestAgent.ImplicitMCTSNNNP8",
+//                "Agents.TestAgent.ImplicitMCTSNNNP10",
 //        };
 
         String[] bots = new String[]{
                 "Agents.ImplicitMCTSNNNP46",
-                "Agents.MCTSTest.MCTS_ProgressiveBias_MAST",
+                "Agents.TestAgent.MCTS_ProgressiveBias_MAST",
                 "Agents.ImplicitMCTSNNMSP3"
         };
 

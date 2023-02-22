@@ -139,4 +139,34 @@ public class descentUtils {
                 return (ScoredMove) rootTableData.sortedScoredMoves.get(0);
         }
     }
+
+    /**
+     * Get the best action to play in the actual game based on the selection policy used
+     *
+     * @param rootTableData Table from the root node in the transposition table
+     * @param maximising    Indicates if the player is maximising
+     * @return The best scored move according to the selection policy
+     */
+    public static CompletedMove finalMoveSelection(TranspositionTableStampCompleted.StampTTDataCompleted rootTableData,
+                                                Enums.SelectionPolicy selectionPolicy, boolean maximising) {
+        switch (selectionPolicy) {
+            case BEST:
+                return rootTableData.sortedScoredMoves.get(0);
+            case SAFEST:
+                CompletedMove scoredMove;
+                CompletedMove safestScoredMove = rootTableData.sortedScoredMoves.get(0);
+
+                for (int i = 0; i < rootTableData.sortedScoredMoves.size(); ++i) {
+                    scoredMove = rootTableData.sortedScoredMoves.get(i);
+                    if (scoredMove.nbVisits > safestScoredMove.nbVisits || scoredMove.nbVisits == safestScoredMove.nbVisits && (maximising && scoredMove.score > safestScoredMove.score || !maximising && scoredMove.score < safestScoredMove.score)) {
+                        safestScoredMove = scoredMove;
+                    }
+                }
+
+                return safestScoredMove;
+            default:
+                System.err.println("Error: selectionPolicy not implemented");
+                return rootTableData.sortedScoredMoves.get(0);
+        }
+    }
 }

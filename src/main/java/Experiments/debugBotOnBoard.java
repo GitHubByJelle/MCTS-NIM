@@ -1,5 +1,6 @@
 package Experiments;
 
+import Agents.TestAgent.ImplicitMCTS;
 import other.AI;
 import other.context.Context;
 import other.move.Move;
@@ -22,7 +23,7 @@ public class debugBotOnBoard {
         System.out.println(DebugTools.contextToString(context));
 
         // Use agent to debug
-        AI agent = new Agents.ImplicitMCTS();
+        AI agent = new ImplicitMCTS();
 
         // Play a move
         int mover = context.state().mover();

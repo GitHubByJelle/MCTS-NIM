@@ -1,5 +1,6 @@
 package Agents;
 
+import Agents.TestAgent.AlphaBetaSearchNN;
 import Evaluator.HeuristicLeafEvaluator;
 import Evaluator.MaxClassicTerminalStateEvaluator;
 import game.Game;
