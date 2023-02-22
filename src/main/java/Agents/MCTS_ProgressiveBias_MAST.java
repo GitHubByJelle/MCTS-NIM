@@ -1,4 +1,4 @@
-package Agents.TestAgent;
+package Agents;
 
 import Agents.MCTS;
 import Evaluator.ClassicTerminalStateEvaluator;

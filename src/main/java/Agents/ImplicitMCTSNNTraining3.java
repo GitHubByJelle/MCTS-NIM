@@ -1,5 +1,6 @@
-package Agents.TestAgent;
+package Agents;
 
+import Agents.TestAgent.MCTSTraining;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Playout.EpsilonGreedyPlayout;
 import MCTSStrategies.Rescaler.Softmax;

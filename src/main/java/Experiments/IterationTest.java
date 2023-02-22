@@ -41,7 +41,7 @@ public class IterationTest {
 
         String[] bots = new String[]{
                 "Agents.AlphaBetaSearchHF",
-                "Agents.TestAgent.MCTS_ProgressiveBias_MAST"
+                "Agents.MCTS_ProgressiveBias_MAST"
         };
 
         // Run all bots N times on the initial board position of the given game

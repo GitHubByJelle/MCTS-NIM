@@ -46,7 +46,7 @@ public class MCTSThreadIterationTest {
 
         String[] bots = new String[]{
                 "Agents.ImplicitMCTSNNNP46",
-                "Agents.TestAgent.MCTS_ProgressiveBias_MAST",
+                "Agents.MCTS_ProgressiveBias_MAST",
                 "Agents.ImplicitMCTSNNMSP3"
         };
 
