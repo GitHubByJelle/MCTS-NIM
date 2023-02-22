@@ -21,13 +21,19 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Threshold number of playouts that a node must have had for its AMAF values to be used */
+    /**
+     * Threshold number of playouts that a node must have had for its AMAF values to be used
+     */
     protected final int ref;
 
-    /** Hyperparameter used in computation of weight for AMAF term */
+    /**
+     * Hyperparameter used in computation of weight for AMAF term
+     */
     protected final double bias;
 
-    /** Reference node in current MCTS simulation (one per thread, in case of multi-threaded MCTS) */
+    /**
+     * Reference node in current MCTS simulation (one per thread, in case of multi-threaded MCTS)
+     */
     protected ThreadLocal<BaseNode> currentRefNode = ThreadLocal.withInitial(() -> null);
 
     //-------------------------------------------------------------------------
@@ -43,10 +49,10 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
      * Constructor with threshold number, weight used in computation AMAF, influence of the implicit minimax value
      * and exploration constant as input
      *
-     * @param ref Threshold number of playouts that a node must have had for its AMAF values to be used
-     * @param bias Hyperparameter used in computation of weight for AMAF term
+     * @param ref                       Threshold number of playouts that a node must have had for its AMAF values to be used
+     * @param bias                      Hyperparameter used in computation of weight for AMAF term
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
+     * @param explorationConstant       Exploration constant
      */
     public ImplicitUCTGRAVE(final int ref, final double bias, double influenceEstimatedMinimax,
                             double explorationConstant) {
@@ -59,7 +65,7 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT and GRAVE
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -68,7 +74,7 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -86,32 +92,30 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
         double meanScore;
         double meanAMAF;
         double beta;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
                 meanAMAF = 0.0;
                 beta = 0.0;
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
 
                 final Move move = child.parentMove();
                 final BaseNode.NodeStatistics graveStats = currentRefNode.get().graveStats(new MCTS.MoveKey(move, current.contextRef().trial().numMoves()));
 
-                if (graveStats == null)
-                {
+                if (graveStats == null) {
                     // In single-threaded MCTS this should always be a bug,
                     // but in multi-threaded MCTS it can happen
                     meanAMAF = 0.0;
                     beta = 0.0;
-                }
-                else {
+                } else {
                     final double graveScore = graveStats.accumulatedScore;
                     final int graveVisits = graveStats.visitCount;
                     meanAMAF = graveScore / graveVisits;
@@ -119,7 +123,7 @@ public class ImplicitUCTGRAVE extends ImplicitUCT {
                 }
             }
 
-            meanScore = (1 - this.influenceEstimatedMinimax) *  exploit +
+            meanScore = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue;
             double graveValue = (1.0 - beta) * meanScore + beta * meanAMAF;
             final double uctGraveValue = graveValue + explorationConstant * explore;

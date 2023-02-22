@@ -24,7 +24,9 @@ public class MCTS_POC extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -32,6 +34,7 @@ public class MCTS_POC extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (initial influence estimated value = 0.8, exploration=2, QInit=PARENT, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public MCTS_POC(String pathName) {
@@ -54,8 +57,9 @@ public class MCTS_POC extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string, the influence of the estimated value,
      * and exploration as input. (QInit=PARENT, 4 threads)
-     * @param pathName Path to the desired neural network
-     * @param alpha influence of the estimated value
+     *
+     * @param pathName            Path to the desired neural network
+     * @param alpha               influence of the estimated value
      * @param explorationConstant exploration constant
      */
     public MCTS_POC(String pathName, float alpha, float explorationConstant) {
@@ -79,7 +83,7 @@ public class MCTS_POC extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

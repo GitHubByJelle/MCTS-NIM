@@ -8,7 +8,6 @@ import other.context.Context;
 import other.move.Move;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * A simple example implementation of a standard UCT approach.
  * <p>
  * Only supports deterministic, alternating-move games.
- *
+ * <p>
  * Found on Ludii's github
  *
  * @author Dennis Soemers

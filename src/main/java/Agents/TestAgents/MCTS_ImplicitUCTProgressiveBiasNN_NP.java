@@ -8,8 +8,6 @@ import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Selection.ImplicitUCTProgressiveBias;
 import Training.LearningManager;
 import game.Game;
-import search.mcts.backpropagation.MonteCarloBackprop;
-import search.mcts.playout.MAST;
 import search.mcts.playout.RandomPlayout;
 
 /**
@@ -19,13 +17,16 @@ public class MCTS_ImplicitUCTProgressiveBiasNN_NP extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructor with the path to the desired neural network as string
+     *
      * @param pathName Path to the desired neural network
      */
     public MCTS_ImplicitUCTProgressiveBiasNN_NP(String pathName) {
@@ -44,7 +45,7 @@ public class MCTS_ImplicitUCTProgressiveBiasNN_NP extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

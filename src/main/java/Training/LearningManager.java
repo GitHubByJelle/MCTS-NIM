@@ -1,18 +1,12 @@
 package Training;
 
-import static java.util.stream.Collectors.toList;
-
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.IntStream;
-
 import Agents.MCTSTraining;
 import Agents.NNBot;
 import Agents.RandomAI;
 import Evaluator.ClassicTerminalStateEvaluator;
 import Evaluator.GameStateEvaluator;
 import Evaluator.NeuralNetworkLeafEvaluator;
+import game.Game;
 import org.deeplearning4j.datasets.iterator.utilty.ListDataSetIterator;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
@@ -31,8 +25,6 @@ import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-
-import game.Game;
 import other.AI;
 import other.GameLoader;
 import other.context.Context;
@@ -41,6 +33,13 @@ import other.trial.Trial;
 import utils.Enums.DataSelection;
 import utils.Enums.NetworkType;
 import utils.TranspositionTableLearning;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Manages everything with respect to training a Neural Network. Based on the descent framework, proposed in:
@@ -51,37 +50,59 @@ public class LearningManager {
 
     //-------------------------------------------------------------------------
 
-    /** Enum for the data selection strategy used from the descent framework */
+    /**
+     * Enum for the data selection strategy used from the descent framework
+     */
     DataSelection dataSelection;
 
-    /** The number of epochs on the created data */
+    /**
+     * The number of epochs on the created data
+     */
     int nEpochs;
 
-    /** The number of TrainingSamples in a single batch during training */
+    /**
+     * The number of TrainingSamples in a single batch during training
+     */
     int batchSize;
 
-    /** The number of players in the game (two players are assumed) */
+    /**
+     * The number of players in the game (two players are assumed)
+     */
     final static int numPlayers = 2;
 
-    /** Padding added to the input of the NN (padding of 1 is assumed) */
+    /**
+     * Padding added to the input of the NN (padding of 1 is assumed)
+     */
     final static int padding = 1;
 
-    /** Maximum number of games in experience replay */
+    /**
+     * Maximum number of games in experience replay
+     */
     int maxSizeExperienceReplay;
 
-    /** The rate of the total pairs that are sampled from experience replay */
+    /**
+     * The rate of the total pairs that are sampled from experience replay
+     */
     float samplingRateExperienceReplay;
 
-    /** Randomgenerator to generate pseudorandom numbers */
+    /**
+     * Randomgenerator to generate pseudorandom numbers
+     */
     public static Random rng;
 
-    /** File class for the last created Neural Network (can be used to continue training) */
+    /**
+     * File class for the last created Neural Network (can be used to continue training)
+     */
     private final File checkpointFile = new File("Network_checkpoint.bin");
 
-    /** Filename of the file that will be created to create checkpoints of the experience memory */
+    /**
+     * Filename of the file that will be created to create checkpoints of the experience memory
+     */
     private final String checkpointTrainData = "TrainData_checkpoint.obj";
 
-    /** Hashmap which stores all training data (experience memory) */
+    /**
+     * Hashmap which stores all training data (experience memory)
+     */
     private static LinkedHashMap<String, TrainingSample> trainData = new LinkedHashMap<>();
 
     //-------------------------------------------------------------------------
@@ -90,10 +111,10 @@ public class LearningManager {
      * Constructor with the data selection, number of epochs, batch size, maximum size
      * of the experience replay and sample rate of the experience replay as input.
      *
-     * @param dataSelection Data selection strategy used from the descent framework
-     * @param nEpochs The number of epochs on the created data
-     * @param batchSize The number of pairs in a single batch during training
-     * @param maxSizeExperienceReplay Maximum number of games in experience replay
+     * @param dataSelection                Data selection strategy used from the descent framework
+     * @param nEpochs                      The number of epochs on the created data
+     * @param batchSize                    The number of pairs in a single batch during training
+     * @param maxSizeExperienceReplay      Maximum number of games in experience replay
      * @param samplingRateExperienceReplay The rate of the total pairs that are sampled from experience replay
      */
     public LearningManager(DataSelection dataSelection, int nEpochs, int batchSize,
@@ -110,7 +131,7 @@ public class LearningManager {
     /**
      * Load a Neural Network (DeepLearning4J) based on the given path
      *
-     * @param pathName Path to an existing Neural Network
+     * @param pathName    Path to an existing Neural Network
      * @param loadUpdater Indicates if NN needs to be used for Training (true means yes)
      * @return Neural Network (DeepLearning4J) class
      */
@@ -126,8 +147,8 @@ public class LearningManager {
     /**
      * Creates a new neural network based on the architecture and game given
      *
-     * @param game Ludii's game class
-     * @param networkType Enum for the Neural Network architecture used
+     * @param game         Ludii's game class
+     * @param networkType  Enum for the Neural Network architecture used
      * @param learningRate The learning rate during training
      * @return Untrained Neural Network (DeepLearning4J)
      */
@@ -217,13 +238,13 @@ public class LearningManager {
      *
      * @param pathName The path to the experience memory of the last few searches of previous training
      */
-    public void loadTrainData(String pathName){
+    public void loadTrainData(String pathName) {
         // Loaad object
         try (ObjectInputStream trainExamplesInput = new ObjectInputStream(new FileInputStream(pathName))) {
             Object readObject = trainExamplesInput.readObject();
 
             // Add to data to learningmanager
-            this.trainData = (LinkedHashMap<String, TrainingSample>)readObject;
+            this.trainData = (LinkedHashMap<String, TrainingSample>) readObject;
 
             // Since the old game indices have been used, the indices needs to be corrected
             this.resetGameIndex(this.trainData);
@@ -246,7 +267,7 @@ public class LearningManager {
      *
      * @param linkedHashMap TrainingSamples with corrected index
      */
-    private void resetGameIndex(LinkedHashMap<String, TrainingSample> linkedHashMap){
+    private void resetGameIndex(LinkedHashMap<String, TrainingSample> linkedHashMap) {
         // Determine size and current index
         int sizeData = linkedHashMap.size();
         String[] keys = Arrays.copyOf(linkedHashMap.keySet().toArray(), sizeData, String[].class);
@@ -254,11 +275,11 @@ public class LearningManager {
         int currentNewIndex = -1;
 
         // For all sample, reset the index
-        for (int i = sizeData-1; i >= 0; i--) {
+        for (int i = sizeData - 1; i >= 0; i--) {
             String key = keys[i];
             TrainingSample sample = linkedHashMap.get(key);
             // Reset index
-            if (currentIndex == sample.index){
+            if (currentIndex == sample.index) {
                 sample.index = currentNewIndex;
             }
             // Decrement the current index by 1 if a new index has been found
@@ -275,14 +296,14 @@ public class LearningManager {
      * Saves the data from the Transposition Table (created by the Neural Network) from last game
      * to the experience memory.
      *
-     * @param newData Transposition Table used by search algorithm during the game
+     * @param newData         Transposition Table used by search algorithm during the game
      * @param terminalContext Ludii's context of the terminal game position of the played game
-     * @param agent NNBot class of agent (search algorithm) used during Training
-     * @param gameIndex Index of the current game
-     * @param numGame Number of games from current iteration
+     * @param agent           NNBot class of agent (search algorithm) used during Training
+     * @param gameIndex       Index of the current game
+     * @param numGame         Number of games from current iteration
      * @param numGamesPerIter Number of games from all iterations
-     * @param finalScore Score of terminal game position (determined by TerminalGameStateEvaluator)
-     * @param boardSize Number of squares on the board (squared board is assumed)
+     * @param finalScore      Score of terminal game position (determined by TerminalGameStateEvaluator)
+     * @param boardSize       Number of squares on the board (squared board is assumed)
      */
     public void saveData(TranspositionTableLearning newData, Context terminalContext, NNBot agent,
                          int gameIndex, int numGame, int numGamesPerIter, float finalScore,
@@ -299,7 +320,7 @@ public class LearningManager {
         // Add the new samples to the trainingdata
         this.addNewSamples(this.trainData, gameExamples);
 
-        System.out.println("Game " + (numGame+1) + "/" + numGamesPerIter +
+        System.out.println("Game " + (numGame + 1) + "/" + numGamesPerIter +
                 " finished. Total training samples: " + this.trainData.size() +
                 " (" + gameExamples.size() + " new).");
     }
@@ -308,14 +329,14 @@ public class LearningManager {
      * Saves the data from the Transposition Table (created by the Neural Network) from last game
      * to the experience memory.
      *
-     * @param newData Transposition Table used by search algorithm during the game
+     * @param newData         Transposition Table used by search algorithm during the game
      * @param terminalContext Ludii's context of the terminal game position of the played game
-     * @param agent MCTS class of agent (search algorithm) used during Training
-     * @param gameIndex Index of the current game
-     * @param numGame Number of games from current iteration
+     * @param agent           MCTS class of agent (search algorithm) used during Training
+     * @param gameIndex       Index of the current game
+     * @param numGame         Number of games from current iteration
      * @param numGamesPerIter Number of games from all iterations
-     * @param finalScore Score of terminal game position (determined by TerminalGameStateEvaluator)
-     * @param boardSize Number of squares on the board (squared board is assumed)
+     * @param finalScore      Score of terminal game position (determined by TerminalGameStateEvaluator)
+     * @param boardSize       Number of squares on the board (squared board is assumed)
      */
     public void saveData(TranspositionTableLearning newData, Context terminalContext, MCTSTraining agent,
                          int gameIndex, int numGame, int numGamesPerIter, float finalScore,
@@ -332,7 +353,7 @@ public class LearningManager {
         // Add the new samples to the trainingdata
         this.addNewSamples(this.trainData, gameExamples);
 
-        System.out.println("Game " + (numGame+1) + "/" + numGamesPerIter +
+        System.out.println("Game " + (numGame + 1) + "/" + numGamesPerIter +
                 " finished. Total training samples: " + this.trainData.size() +
                 " (" + gameExamples.size() + " new).");
     }
@@ -341,12 +362,12 @@ public class LearningManager {
      * Saves the data from the Transposition Table (created by the Neural Network) from the games
      * that have been run in parallel to the shared experience memory (synchronized)
      *
-     * @param newData Transposition Table used by search algorithm during the game
-     * @param gameIndex Index of the current game
-     * @param numGame Number of games from current iteration
+     * @param newData         Transposition Table used by search algorithm during the game
+     * @param gameIndex       Index of the current game
+     * @param numGame         Number of games from current iteration
      * @param numGamesPerIter Number of games from all iterations
-     * @param finalScore Score of terminal game position (determined by TerminalGameStateEvaluator)
-     * @param boardSize Width the board in squares (squared board is assumed)
+     * @param finalScore      Score of terminal game position (determined by TerminalGameStateEvaluator)
+     * @param boardSize       Width the board in squares (squared board is assumed)
      */
     public void saveDataParallel(TranspositionTableLearning newData, int gameIndex, int numGame, int numGamesPerIter,
                                  float finalScore, int boardSize) {
@@ -357,11 +378,11 @@ public class LearningManager {
         gameExamples = createMirroredBoards(gameExamples, boardSize);
 
         // Add the new samples to the trainingdata
-        synchronized (this.trainData){
+        synchronized (this.trainData) {
             this.addNewSamples(this.trainData, gameExamples);
         }
 
-        System.out.println("Game " + (numGame+1) + "/" + numGamesPerIter +
+        System.out.println("Game " + (numGame + 1) + "/" + numGamesPerIter +
                 " finished. Total training samples: " + this.trainData.size() +
                 " (" + gameExamples.size() + " new).");
     }
@@ -372,11 +393,11 @@ public class LearningManager {
      * players results starting position that is -1 * with his own starting position can be added.
      *
      * @param originalSamples The TrainingSamples which needed to be mirrored
-     * @param boardSize Width the board in squares (squared board is assumed)
+     * @param boardSize       Width the board in squares (squared board is assumed)
      * @return Mirrored TrainingSamples INCLUDING the original TrainingSamples
      */
     private HashMap<String, TrainingSample> createMirroredBoards(HashMap<String, TrainingSample> originalSamples,
-                                                                 int boardSize){
+                                                                 int boardSize) {
         // Initialise needed variables
         INDArray mirroredBoard;
         float[] floatMirroredBoard;
@@ -385,7 +406,7 @@ public class LearningManager {
         for (TrainingSample trainSample : originalSamples.values()) {
             // Create original board
             INDArray originalBoard = Nd4j.create(trainSample.board, 1, numPlayers,
-                    boardSize+2*padding, boardSize+2*padding);
+                    boardSize + 2 * padding, boardSize + 2 * padding);
 
             // Add original board
             mirroredSamples.put(Arrays.toString(trainSample.board),
@@ -395,7 +416,7 @@ public class LearningManager {
             mirroredBoard = mirrorBoardVertically(originalBoard);
             floatMirroredBoard = mirroredBoard.data().asFloat();
 
-            if (!mirroredSamples.containsKey(Arrays.toString(floatMirroredBoard))){
+            if (!mirroredSamples.containsKey(Arrays.toString(floatMirroredBoard))) {
                 mirroredSamples.put(Arrays.toString(floatMirroredBoard),
                         new TrainingSample(floatMirroredBoard, trainSample.value, trainSample.index));
             }
@@ -424,7 +445,7 @@ public class LearningManager {
      * Merges to hashmaps
      *
      * @param linkedHashMap HashMap to which the samples need to be added
-     * @param newSamples Data wished to add to the other HashMap
+     * @param newSamples    Data wished to add to the other HashMap
      */
     private void addNewSamples(LinkedHashMap<String, TrainingSample> linkedHashMap,
                                HashMap<String, TrainingSample> newSamples) {
@@ -439,14 +460,14 @@ public class LearningManager {
      * Converts the data from the Transposition Table to hashmap. The assumption is made that the
      * Transposition Tables only contains the Samples that belong to the data selection.
      *
-     * @param TT Transposition Table used by search algorithm during the game
+     * @param TT            Transposition Table used by search algorithm during the game
      * @param dataSelection Data selection strategy used from the descent framework
-     * @param finalScore Score of terminal game position (determined by TerminalGameStateEvaluator)
-     * @param gameIndex Index of the current game
+     * @param finalScore    Score of terminal game position (determined by TerminalGameStateEvaluator)
+     * @param gameIndex     Index of the current game
      * @return Hashmap of TrainingSamples of current game
      */
     private static HashMap<String, TrainingSample> getDataFromTT(TranspositionTableLearning TT, DataSelection dataSelection,
-                                            float finalScore, int gameIndex) {
+                                                                 float finalScore, int gameIndex) {
 
         // Initialise needed variables
         HashMap<String, TrainingSample> gameSamples = new HashMap<>();
@@ -498,7 +519,7 @@ public class LearningManager {
     /**
      * Updates the weights of the Neural Network with a sample from the experience memory
      *
-     * @param net Neural Network class
+     * @param net       Neural Network class
      * @param boardSize Width of the board (squared board is assumed)
      * @param gameIndex Index of the current game
      */
@@ -535,7 +556,7 @@ public class LearningManager {
     /**
      * Updates the weights of the Neural Network
      *
-     * @param net Neural Network class
+     * @param net     Neural Network class
      * @param dataset Dataset which can be used to fit neural network
      */
     private void fitNeuralNetwork(MultiLayerNetwork net, List<DataSet> dataset) {
@@ -552,15 +573,15 @@ public class LearningManager {
     /**
      * Samples indices based on experience replay
      *
-     * @param size Size of experience memory
-     * @param gameIndex Index of current game
-     * @param maxSize Maximum number of games in experience replay
+     * @param size         Size of experience memory
+     * @param gameIndex    Index of current game
+     * @param maxSize      Maximum number of games in experience replay
      * @param samplingRate The rate of the total pairs that are sampled from experience replay
      * @return Sample from experience replay
      */
     private int[] experienceReplay(int size, int gameIndex, int maxSize, float samplingRate) {
         // If index is too old, remove
-        if (this.trainData.get(this.trainData.keySet().toArray()[0]).index < (gameIndex - maxSize + 1)){
+        if (this.trainData.get(this.trainData.keySet().toArray()[0]).index < (gameIndex - maxSize + 1)) {
             keepMaxSizeGames(this.trainData, gameIndex, maxSize);
             size = this.trainData.size();
         }
@@ -585,15 +606,15 @@ public class LearningManager {
      * Remove all old games, only keep the last few games (based on given game index)
      *
      * @param linkedHashMap Experience memory
-     * @param gameIndex Index of current game
-     * @param maxSize Total number of games allowed in experience memory
+     * @param gameIndex     Index of current game
+     * @param maxSize       Total number of games allowed in experience memory
      */
     private void keepMaxSizeGames(LinkedHashMap<String, TrainingSample> linkedHashMap, int gameIndex, int maxSize) {
         int removeGameIndex = gameIndex - maxSize + 1;
         int removeIndex = 0;
         Object[] keys = linkedHashMap.keySet().toArray();
         for (int i = 0; i < keys.length; i++) {
-            if (linkedHashMap.get(keys[i]).index >= removeGameIndex){
+            if (linkedHashMap.get(keys[i]).index >= removeGameIndex) {
                 removeIndex = i;
                 break;
             }
@@ -612,16 +633,16 @@ public class LearningManager {
      * @param toMirror Original matrix representation of the board (NN input)
      * @return Vertical mirrored matrix representation of the board
      */
-    private INDArray mirrorBoardVertically(INDArray toMirror){
+    private INDArray mirrorBoardVertically(INDArray toMirror) {
         long[] shape = toMirror.shape();
-        int batches = (int)shape[0];
-        int boardSize = (int)shape[2];
+        int batches = (int) shape[0];
+        int boardSize = (int) shape[2];
         INDArray verticalBoard = Nd4j.zeros(shape);
         for (int b = 0; b < batches; b++) {
             for (int p = 0; p < numPlayers; p++) {
                 for (int i = 0; i < boardSize; i++) {
                     verticalBoard.slice(b).slice(p)
-                            .putColumn(boardSize-i-1, toMirror.slice(b).slice(p).getColumn(i));
+                            .putColumn(boardSize - i - 1, toMirror.slice(b).slice(p).getColumn(i));
                 }
             }
         }
@@ -635,16 +656,16 @@ public class LearningManager {
      * @param toMirror Original matrix representation of the board (NN input)
      * @return Mirrored matrix representation of the board with respect to the player perspective
      */
-    private INDArray mirrorPlayerPerspective(INDArray toMirror){
+    private INDArray mirrorPlayerPerspective(INDArray toMirror) {
         long[] shape = toMirror.shape();
-        int batches = (int)shape[0];
-        int boardSize = (int)shape[2];
+        int batches = (int) shape[0];
+        int boardSize = (int) shape[2];
         INDArray switchedPerspectiveBoard = Nd4j.zeros(shape);
         for (int b = 0; b < batches; b++) {
             for (int p = 0; p < this.numPlayers; p++) {
                 for (int i = 0; i < boardSize; i++) {
-                    switchedPerspectiveBoard.slice(b).slice(this.numPlayers-p-1)
-                            .putRow(boardSize-i-1, toMirror.slice(b).slice(p).getRow(i));
+                    switchedPerspectiveBoard.slice(b).slice(this.numPlayers - p - 1)
+                            .putRow(boardSize - i - 1, toMirror.slice(b).slice(p).getRow(i));
                 }
             }
         }
@@ -672,7 +693,7 @@ public class LearningManager {
     /**
      * Saves a checkpoint of the Neural Network with a given string and experience memory
      *
-     * @param net Neural Network class
+     * @param net                Neural Network class
      * @param checkpointFileName File name of the saved neural network
      * @throws IOException
      */
@@ -688,8 +709,8 @@ public class LearningManager {
     /**
      * Saves final Neural Network. The checkpoint of the neural networ will be deleted.
      *
-     * @param net Neural network to be saved
-     * @param FileName File name of the saved neural network
+     * @param net         Neural network to be saved
+     * @param FileName    File name of the saved neural network
      * @param saveUpdater Indicates if the updater needs to be saved (the updater is required to continue training)
      * @throws IOException
      */
@@ -700,9 +721,9 @@ public class LearningManager {
     /**
      * Saves final Neural Network, while optionally deleting the checkpoint of the neural network
      *
-     * @param net Neural network to be saved
-     * @param FileName File name of the saved neural network
-     * @param saveUpdater Indicates if the updater needs to be saved (the updater is required to continue training)
+     * @param net              Neural network to be saved
+     * @param FileName         File name of the saved neural network
+     * @param saveUpdater      Indicates if the updater needs to be saved (the updater is required to continue training)
      * @param deleteCheckpoint Indicates if the checkpoint of the neural network should be deleted
      * @throws IOException
      */
@@ -710,7 +731,7 @@ public class LearningManager {
                                boolean saveUpdater, boolean deleteCheckpoint) throws IOException {
         net.save(new File(FileName), saveUpdater);
 
-        if (deleteCheckpoint){
+        if (deleteCheckpoint) {
             this.checkpointFile.delete();
         }
     }
@@ -720,14 +741,14 @@ public class LearningManager {
      * until a terminal game position has been reached. A GameStateEvaluator is used to evaluate these states, which
      * be the target values of the neural network.
      *
-     * @param gameName Name of the game (as used by Ludii)
-     * @param networkType Neural Network architecture
+     * @param gameName     Name of the game (as used by Ludii)
+     * @param networkType  Neural Network architecture
      * @param learningRate The learning rate during training
-     * @param numSamples Number of samples (game position / pairs) to create (size of the created dataset)
+     * @param numSamples   Number of samples (game position / pairs) to create (size of the created dataset)
      * @param patienceData Maximum number of times the game position generator needs to create a new random
      *                     board before terminating (since the created game position already exists)
-     * @param dataPath Path to pre-generated dataset to use (optionally)
-     * @param saveData Indicates if data should be saved after being generated
+     * @param dataPath     Path to pre-generated dataset to use (optionally)
+     * @param saveData     Indicates if data should be saved after being generated
      * @throws IOException
      */
     public void pretrainNetwork(String gameName, NetworkType networkType, float learningRate,
@@ -735,24 +756,23 @@ public class LearningManager {
                                 String dataPath, boolean saveData) throws IOException {
         // Create network
         System.out.println("Create a new neural network.");
-        Game game = GameLoader.loadGameFromName(gameName+".lud");
+        Game game = GameLoader.loadGameFromName(gameName + ".lud");
         final int boardSize = (int) Math.sqrt(game.board().numSites());
         MultiLayerNetwork newNet = this.createNetwork(game, networkType, learningRate);
         System.out.println("The network has been created: \n" + newNet.summary());
 
         HashMap<String, TrainingSample> createdData = null;
         // Create dataset
-        if (dataPath == null){
+        if (dataPath == null) {
             System.out.println("Starting to create a dataset of final game states.");
             createdData = this.createFinalBoardHashMap(gameName, numSamples, patienceData);
             System.out.println("All games have been played.");
-        }
-        else {
+        } else {
             System.out.println("Load dataset...");
             try (ObjectInputStream createdExamples = new ObjectInputStream(new FileInputStream(dataPath))) {
                 Object readObject = createdExamples.readObject();
 
-                createdData = (HashMap<String, TrainingSample>)readObject;
+                createdData = (HashMap<String, TrainingSample>) readObject;
 
                 System.out.printf("Restored train examples from %s with %d train examples.\n",
                         dataPath,
@@ -772,7 +792,7 @@ public class LearningManager {
         System.out.println("The dataset has been created.");
 
         // Save data
-        if (saveData){
+        if (saveData) {
             // Save training data
             try (ObjectOutputStream trainExamplesOutput = new ObjectOutputStream(
                     new FileOutputStream("pretrainData.obj"))) {
@@ -796,7 +816,7 @@ public class LearningManager {
                         "bSize" + batchSize + "_" +
                         "nEp" + nEpochs + "_" +
                         "nSam" + createdData.size() + "_" +
-                        new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date())+
+                        new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) +
                         ".bin",
                 true);
     }
@@ -804,18 +824,18 @@ public class LearningManager {
     /**
      * Converts HashMap with TrainingSamples to input for the Neural Network based on given indices
      *
-     * @param hashMap HashMap which needs to be converted to NN input
+     * @param hashMap         HashMap which needs to be converted to NN input
      * @param selectedIndices The indices of the selected samples
-     * @param boardSize The width of the board (squared board is assumed)
+     * @param boardSize       The width of the board (squared board is assumed)
      * @return Array of inputs which can be used as input by the NN
      */
-    public INDArray[] hashMapToINDArray(HashMap<String, TrainingSample> hashMap, int[] selectedIndices, int boardSize){
+    public INDArray[] hashMapToINDArray(HashMap<String, TrainingSample> hashMap, int[] selectedIndices, int boardSize) {
         // Extract all unique boards from the collected train data
         TrainingSample[] trainingSamples = hashMap.values().toArray(new TrainingSample[0]);
 
         // Create training data for current epoch by selecting the indices given
         INDArray input = Nd4j.zeros(selectedIndices.length, numPlayers,
-                boardSize+2*padding, boardSize+2*padding);
+                boardSize + 2 * padding, boardSize + 2 * padding);
         INDArray target = Nd4j.zeros(selectedIndices.length, 1);
         for (int i = 0; i < selectedIndices.length; i++) {
             input.put(new INDArrayIndex[]{NDArrayIndex.interval(i, i + 1),
@@ -823,7 +843,7 @@ public class LearningManager {
                             NDArrayIndex.all(),
                             NDArrayIndex.all()},
                     Nd4j.create(trainingSamples[selectedIndices[i]].board,
-                            1, numPlayers, boardSize+2*padding, boardSize+2*padding));
+                            1, numPlayers, boardSize + 2 * padding, boardSize + 2 * padding));
             target.putScalar(i, trainingSamples[selectedIndices[i]].value);
         }
 
@@ -835,13 +855,13 @@ public class LearningManager {
      * until a terminal game position has been reached. A GameStateEvaluator is used to evaluate these states, which
      * be the target values of the neural network. This is being done for the given gameName.
      *
-     * @param gameName Name of the game (as used by Ludii)
+     * @param gameName   Name of the game (as used by Ludii)
      * @param numSamples Number of samples (game position / pairs) to create (size of the created dataset)
-     * @param patience Maximum number of times the game position generator needs to create a new random
-     *                 board before terminating (since the created game position already exists)
+     * @param patience   Maximum number of times the game position generator needs to create a new random
+     *                   board before terminating (since the created game position already exists)
      * @return HashMap with random game positions
      */
-    public HashMap<String, TrainingSample> createFinalBoardHashMap(String gameName, int numSamples, int patience){
+    public HashMap<String, TrainingSample> createFinalBoardHashMap(String gameName, int numSamples, int patience) {
         // Create game environment
         Game game = GameLoader.loadGameFromName(gameName + ".lud");
         Trial trial = new Trial(game);
@@ -906,7 +926,7 @@ public class LearningManager {
                     new TrainingSample(board.data().asFloat(), finalScore, 0));
 
             // If a new board has been added
-            if (contexts.size() > numBoardFound){
+            if (contexts.size() > numBoardFound) {
                 // Add the board based on symmetry as well
                 mirroredBoard = this.mirrorBoardVertically(board).data().asFloat();
                 contexts.put(Arrays.toString(mirroredBoard),
@@ -918,12 +938,11 @@ public class LearningManager {
 
                 // Reset patience
                 currentPatience = 0;
-            }
-            else {
+            } else {
                 // Update patience, if to many times, no new update, return everything
                 currentPatience++;
 
-                if (currentPatience >= patience){
+                if (currentPatience >= patience) {
                     System.out.printf("After %d attempts, no new boards have been found.\n" +
                             "Total amount of final boards created: %d.\n", currentPatience, contexts.size());
                     return contexts;
@@ -938,9 +957,9 @@ public class LearningManager {
      * Predicts the value of the starting position based on the Neural Network and game name given
      *
      * @param gameName Name of the game (as used by Ludii)
-     * @param net Neural Network class
+     * @param net      Neural Network class
      */
-    public void predictRoot(String gameName, MultiLayerNetwork net){
+    public void predictRoot(String gameName, MultiLayerNetwork net) {
         // Create game environment
         Game game = GameLoader.loadGameFromName(gameName + ".lud");
         Trial trial = new Trial(game);
@@ -957,17 +976,23 @@ public class LearningManager {
 /**
  * Single sample in created dataset which stores the board and the estimated value after searching
  */
-class TrainingSample implements Serializable{
+class TrainingSample implements Serializable {
 
     //-------------------------------------------------------------------------
 
-    /** Array representing the board of the given game position */
+    /**
+     * Array representing the board of the given game position
+     */
     public float[] board;
 
-    /** Estimated value of given game position  */
+    /**
+     * Estimated value of given game position
+     */
     public float value;
 
-    /** Index of the game the sample is created in */
+    /**
+     * Index of the game the sample is created in
+     */
     public int index;
 
     //-------------------------------------------------------------------------
@@ -979,7 +1004,7 @@ class TrainingSample implements Serializable{
      * @param value Estimated value of given game position
      * @param index Index of the game the sample is created in
      */
-    public TrainingSample(float[] board, float value, int index){
+    public TrainingSample(float[] board, float value, int index) {
         this.board = board;
         this.value = value;
         this.index = index;
@@ -987,10 +1012,11 @@ class TrainingSample implements Serializable{
 
     /**
      * Converts class to string basec on board and value
+     *
      * @return String representing the TrainingSample
      */
     @Override
-    public String toString(){
+    public String toString() {
         return Arrays.toString(this.board) + ", " + this.value;
     }
 }

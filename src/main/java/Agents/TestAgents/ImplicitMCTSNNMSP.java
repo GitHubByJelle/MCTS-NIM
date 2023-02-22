@@ -24,7 +24,9 @@ public class ImplicitMCTSNNMSP extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -32,11 +34,12 @@ public class ImplicitMCTSNNMSP extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (initial influence estimated value = 0.8, exploration=2, slope=0.05, QInit=PARENT, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public ImplicitMCTSNNMSP(String pathName) {
         super(new ImplicitUCTAlphaDecreaseRescaledExploration(.8, 2,
-                        new Softmax(), 1/20f),
+                        new Softmax(), 1 / 20f),
                 new DynamicEpsilonGreedyPlayout(.1f, .4f,
                         new TanhEvaluatorWrapper(new MSLeafEvaluator(GameLoader.loadGameFromName("Breakthrough.lud")),
                                 60, 100, -100),
@@ -56,7 +59,7 @@ public class ImplicitMCTSNNMSP extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

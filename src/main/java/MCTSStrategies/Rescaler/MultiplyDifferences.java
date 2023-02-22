@@ -3,7 +3,7 @@ package MCTSStrategies.Rescaler;
 /**
  * Class which rescales the given values by multiplying the differences to the mean with the given multiplier
  */
-public class MultiplyDifferences implements Rescaler{
+public class MultiplyDifferences implements Rescaler {
 
     //-------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ public class MultiplyDifferences implements Rescaler{
      *
      * @param multiplier Multiplier that is used to multiply the differences (w.r.t. the mean) with
      */
-    public MultiplyDifferences(float multiplier){
+    public MultiplyDifferences(float multiplier) {
         this.multiplier = multiplier;
     }
 

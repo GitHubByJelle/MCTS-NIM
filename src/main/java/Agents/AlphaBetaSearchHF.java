@@ -21,7 +21,7 @@ public class AlphaBetaSearchHF extends AlphaBetaSearchNN {
      * Perform desired initialisation before starting to play a game
      * Sets all needed variables for alpha beta search w.r.t. to the GameStateEvaluators useds
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

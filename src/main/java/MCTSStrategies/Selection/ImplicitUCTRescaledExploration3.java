@@ -23,7 +23,9 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Softmax rescaler */
+    /**
+     * Softmax rescaler
+     */
     Softmax rescaler;
 
     //-------------------------------------------------------------------------
@@ -32,7 +34,7 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value and softmax rescaler as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param rescaler Rescaler used to rescale the estimated values
+     * @param rescaler                  Rescaler used to rescale the estimated values
      */
     public ImplicitUCTRescaledExploration3(double influenceEstimatedMinimax, Softmax rescaler) {
         this.influenceEstimatedMinimax = influenceEstimatedMinimax;
@@ -45,7 +47,7 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
      * softmax on the estimated values, and the ln(n_p) in the exploration formula is removed (inspired by
      * AlphaZero).
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -64,7 +66,7 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
         for (int i = 0; i < numChildren; i++) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
-                estimatedValues[i] = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValues[i] = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 estimatedValues[i] = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
@@ -78,7 +80,7 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
         // Ties are broken at random
         double exploit;
         double explore;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
@@ -86,10 +88,10 @@ public class ImplicitUCTRescaledExploration3 extends ImplicitUCT {
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = explorationProbs[i] * 1 / (double)numVisits;
+                explore = explorationProbs[i] * 1 / (double) numVisits;
             }
 
-            double uctValue = (1 - this.influenceEstimatedMinimax) *  exploit +
+            double uctValue = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValues[i] +
                     explore;
             if (uctValue > bestValue) {

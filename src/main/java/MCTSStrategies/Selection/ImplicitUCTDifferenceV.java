@@ -23,7 +23,7 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value and exploration constant as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
+     * @param explorationConstant       Exploration constant
      */
     public ImplicitUCTDifferenceV(double influenceEstimatedMinimax, double explorationConstant) {
         this.explorationConstant = explorationConstant;
@@ -34,7 +34,7 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
      * Selects the index of a child of the current node to traverse to based on implicit UCT while using
      * the different to the mean instead of the actual value
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -43,7 +43,7 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -55,7 +55,7 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
         for (int i = 0; i < numChildren; i++) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
-                estimatedValues[i] = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValues[i] = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 estimatedValues[i] = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
@@ -71,7 +71,7 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
         // Ties are broken at random
         double exploit;
         double explore;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
@@ -79,10 +79,10 @@ public class ImplicitUCTDifferenceV extends ImplicitUCT {
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
             }
 
-            double uctValue = (1 - this.influenceEstimatedMinimax) *  exploit +
+            double uctValue = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * (estimatedValues[i] - estimatedAverage) +
                     this.explorationConstant * explore;
 

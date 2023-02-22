@@ -31,6 +31,7 @@ public class EnhancedImplicitMCTSParameterComparison {
      * bot using a NN. See: Lanctot, M., Winands, M. H., Pepels, T., & Sturtevant, N. R. (2014, August). Monte Carlo
      * tree search with heuristic evaluations using implicit minimax backups. In 2014 IEEE Conference on
      * Computational Intelligence and Games (pp. 1-8). IEEE.
+     *
      * @param args All inputs for the tournament. A .proporties file with the following inputs is expected
      *             (see configurations/template.proporties):
      *             String agentClassOne: Name of the class of the first agent
@@ -56,7 +57,7 @@ public class EnhancedImplicitMCTSParameterComparison {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // Check if os is Linux (server), if so use both GPU
-        if (System.getProperty("os.name") == "Linux"){
+        if (System.getProperty("os.name") == "Linux") {
             CudaEnvironment.getInstance().getConfiguration().allowMultiGPU(true);
         }
 
@@ -103,21 +104,21 @@ public class EnhancedImplicitMCTSParameterComparison {
      * Plays games between two bots for both sides for all combinations of alpha, exploration constants and slopes
      * and prints results if needed.
      *
-     * @param agentClassOne Name of the class of the first agent
-     * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param alpha influence of estimated values of implicit MCTS (multiple values)
+     * @param agentClassOne       Name of the class of the first agent
+     * @param agentClassTwo       Name of the class of the second agent
+     * @param agentOneNN          Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param alpha               influence of estimated values of implicit MCTS (multiple values)
      * @param explorationConstant exploration constants of MCTS (multiple values)
-     * @param slope slopes of alpha decrease (multiple values)
-     * @param minAlpha Minimum bound of influence of estimated value of implicit MCTS
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param numGames Total number of games played
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
-     * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
-     * @param printProgress Print progress of the number of games played
-     * @param printResult Print the results of the tournament
+     * @param slope               slopes of alpha decrease (multiple values)
+     * @param minAlpha            Minimum bound of influence of estimated value of implicit MCTS
+     * @param agentTwoNN          Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName            Name of the game (as used by Ludii)
+     * @param numGames            Total number of games played
+     * @param maxSeconds          Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param maxIterations       Maximum number of iterations per move (-1 means no limit)
+     * @param maxDepth            Maximum searched depth per move (-1 means no limit)
+     * @param printProgress       Print progress of the number of games played
+     * @param printResult         Print the results of the tournament
      */
     public static void testParamValues(final String agentClassOne, final String agentClassTwo,
                                        String agentOneNN, double[] alpha, double[] explorationConstant, double[] slope,
@@ -125,10 +126,10 @@ public class EnhancedImplicitMCTSParameterComparison {
                                        final float maxSeconds, final int maxIterations, final int maxDepth,
                                        final boolean printProgress, final boolean printResult) {
         // Plays the number of games for both sides
-        for (double aMin : minAlpha){
-            for (double s : slope){
-                for (double C : explorationConstant){
-                    for (double a : alpha){
+        for (double aMin : minAlpha) {
+            for (double s : slope) {
+                for (double C : explorationConstant) {
+                    for (double a : alpha) {
                         testParamMultipleGames(1, agentClassOne, agentClassTwo, agentOneNN, a, C, s, aMin, agentTwoNN, gameName, numGames,
                                 maxSeconds, maxIterations, maxDepth, printProgress, printResult);
                         testParamMultipleGames(2, agentClassTwo, agentClassOne, agentTwoNN, a, C, s, aMin, agentOneNN, gameName,
@@ -142,22 +143,22 @@ public class EnhancedImplicitMCTSParameterComparison {
     /**
      * Plays games between two bots for single side and prints results if needed.
      *
-     * @param side The side of the tested implicit MCTS bot
-     * @param agentClassOne Name of the class of the first agent
-     * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param alpha influence of heuristics of implicit MCTS
+     * @param side                The side of the tested implicit MCTS bot
+     * @param agentClassOne       Name of the class of the first agent
+     * @param agentClassTwo       Name of the class of the second agent
+     * @param agentOneNN          Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param alpha               influence of heuristics of implicit MCTS
      * @param explorationConstant Exploration constant of MCTS
-     * @param slope Slope of alpha decrease
-     * @param minAlpha Minimum bound of influence of estimated value of implicit MCTS
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param numGames Total number of games played
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
-     * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
-     * @param printProgress Print progress of the number of games played
-     * @param printResult Print the results of the tournament
+     * @param slope               Slope of alpha decrease
+     * @param minAlpha            Minimum bound of influence of estimated value of implicit MCTS
+     * @param agentTwoNN          Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName            Name of the game (as used by Ludii)
+     * @param numGames            Total number of games played
+     * @param maxSeconds          Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param maxIterations       Maximum number of iterations per move (-1 means no limit)
+     * @param maxDepth            Maximum searched depth per move (-1 means no limit)
+     * @param printProgress       Print progress of the number of games played
+     * @param printResult         Print the results of the tournament
      */
     public static void testParamMultipleGames(final int side, final String agentClassOne, final String agentClassTwo,
                                               String agentOneNN, final double alpha, final double explorationConstant,
@@ -190,29 +191,29 @@ public class EnhancedImplicitMCTSParameterComparison {
         }
         if (printResult) {
             System.out.println((agentClassOne + (side == 1 ? (" (" + alpha + ", " + explorationConstant + ", " + slope +
-                    ", " + minAlpha + ")") : "" ))
+                    ", " + minAlpha + ")") : ""))
                     + " vs " +
-                    (agentClassTwo + (side == 2 ? (" (" + alpha + ", " + explorationConstant + ", " + slope + ", " + minAlpha + ")") : "" ))
-                            + ": " + Arrays.toString(win_percentage));
+                    (agentClassTwo + (side == 2 ? (" (" + alpha + ", " + explorationConstant + ", " + slope + ", " + minAlpha + ")") : ""))
+                    + ": " + Arrays.toString(win_percentage));
         }
     }
 
     /**
      * Plays a single game between to bots.
      *
-     * @param side The side of the tested implicit MCTS bot
-     * @param agentClassOne Name of the class of the first agent
-     * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param alpha influence of heuristics of implicit MCTS
+     * @param side                The side of the tested implicit MCTS bot
+     * @param agentClassOne       Name of the class of the first agent
+     * @param agentClassTwo       Name of the class of the second agent
+     * @param agentOneNN          Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param alpha               influence of heuristics of implicit MCTS
      * @param explorationConstant Exploration constant of MCTS
-     * @param slope Slope of alpha decrease
-     * @param minAlpha Minimum bound of influence of estimated value of implicit MCTS
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
-     * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
+     * @param slope               Slope of alpha decrease
+     * @param minAlpha            Minimum bound of influence of estimated value of implicit MCTS
+     * @param agentTwoNN          Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName            Name of the game (as used by Ludii)
+     * @param maxSeconds          Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param maxIterations       Maximum number of iterations per move (-1 means no limit)
+     * @param maxDepth            Maximum searched depth per move (-1 means no limit)
      * @return playerID of the winner
      */
     public static int testParamSingleGame(final int side, final String agentClassOne,
@@ -231,12 +232,11 @@ public class EnhancedImplicitMCTSParameterComparison {
         try {
             // Initialise the correct agent with input
             if (agentOneNN != null && agentClassOne.contains("NN")) {
-                if (side == 1 && agentClassOne.contains("Implicit")){
+                if (side == 1 && agentClassOne.contains("Implicit")) {
                     agents.add((AI) Class.forName(agentClassOne).getDeclaredConstructor(String.class, float.class,
                                     float.class, float.class, float.class)
-                            .newInstance(agentOneNN, (float)alpha, (float)explorationConstant, (float)slope, (float)minAlpha));
-                }
-                else{
+                            .newInstance(agentOneNN, (float) alpha, (float) explorationConstant, (float) slope, (float) minAlpha));
+                } else {
                     agents.add((AI) Class.forName(agentClassOne).getDeclaredConstructor(String.class).newInstance(agentOneNN));
                 }
             } else if (agentOneNN != null) {
@@ -250,10 +250,10 @@ public class EnhancedImplicitMCTSParameterComparison {
         }
         try {
             if (agentTwoNN != null && agentClassTwo.contains("NN")) {
-                if (side == 2 && agentClassTwo.contains("Implicit")){
+                if (side == 2 && agentClassTwo.contains("Implicit")) {
                     agents.add((AI) Class.forName(agentClassTwo).getDeclaredConstructor(String.class, float.class,
                                     float.class, float.class, float.class)
-                            .newInstance(agentTwoNN, (float)alpha, (float)explorationConstant, (float)slope, (float)minAlpha));
+                            .newInstance(agentTwoNN, (float) alpha, (float) explorationConstant, (float) slope, (float) minAlpha));
                 } else {
                     agents.add((AI) Class.forName(agentClassTwo).getDeclaredConstructor(String.class).newInstance(agentTwoNN));
                 }

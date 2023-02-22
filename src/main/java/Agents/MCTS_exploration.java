@@ -20,7 +20,9 @@ public class MCTS_exploration extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -28,6 +30,7 @@ public class MCTS_exploration extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (influence estimated value = 0.8, exploration constant=2, QInit=PARENT, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public MCTS_exploration(String pathName) {
@@ -46,7 +49,7 @@ public class MCTS_exploration extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

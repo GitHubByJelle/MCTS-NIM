@@ -2,9 +2,7 @@ package Agents.MCTSTest;
 
 import Agents.MCTS;
 import Evaluator.ClassicTerminalStateEvaluator;
-import Evaluator.MSLeafEvaluator;
 import Evaluator.ParallelNeuralNetworkLeafEvaluator;
-import Evaluator.TanhEvaluatorWrapper;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Selection.ProgressiveBiasEvaluator;
 import Training.LearningManager;
@@ -19,13 +17,16 @@ public class MCTS_ProgressiveBiasNN_MAST extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructor with the path to the desired neural network as string
+     *
      * @param pathName Path to the desired neural network
      */
     public MCTS_ProgressiveBiasNN_MAST(String pathName) {
@@ -45,7 +46,7 @@ public class MCTS_ProgressiveBiasNN_MAST extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

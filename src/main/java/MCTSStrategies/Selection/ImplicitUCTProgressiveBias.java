@@ -20,7 +20,9 @@ public class ImplicitUCTProgressiveBias extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Weight of Progressive bias (based on intial value Ludii implementation, see ProgressiveBias) */
+    /**
+     * Weight of Progressive bias (based on intial value Ludii implementation, see ProgressiveBias)
+     */
     protected final double progressiveWeight = 10;
 
     //-------------------------------------------------------------------------
@@ -36,7 +38,7 @@ public class ImplicitUCTProgressiveBias extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value and exploration constant as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
+     * @param explorationConstant       Exploration constant
      */
     public ImplicitUCTProgressiveBias(final float influenceEstimatedMinimax, double explorationConstant) {
         this.influenceEstimatedMinimax = influenceEstimatedMinimax;
@@ -46,7 +48,7 @@ public class ImplicitUCTProgressiveBias extends ImplicitUCT {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT and Progressive Bias
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -55,7 +57,7 @@ public class ImplicitUCTProgressiveBias extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -67,18 +69,18 @@ public class ImplicitUCTProgressiveBias extends ImplicitUCT {
         double explore;
         double estimatedValue;
         double estimatedScore;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
 
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i);
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i);
                 estimatedScore = this.progressiveWeight * estimatedValue; // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
                 estimatedScore = (this.progressiveWeight * estimatedValue) / numVisits;

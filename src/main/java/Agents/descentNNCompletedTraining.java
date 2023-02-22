@@ -21,36 +21,54 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static utils.CompletedMove.*;
 
-/** Selects the best move to play based by using batched Neural Network evaluations in
+/**
+ * Selects the best move to play based by using batched Neural Network evaluations in
  * combination with completed descent as proposed in Cohen-Solal, Q. (2020). Learning to play two-player perfect-information
  * games without knowledge. arXiv preprint arXiv:2008.01188. It is implemented to additionally store the trainings data
- * found after searching. This allows the search algorithm to be used in the descent framework */
+ * found after searching. This allows the search algorithm to be used in the descent framework
+ */
 public class descentNNCompletedTraining extends NNBot {
 
     //-------------------------------------------------------------------------
 
-    /** Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.) */
+    /**
+     * Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.)
+     */
     protected int player = -1;
 
-    /** Indicates the exploration policy (selection during search) used */
+    /**
+     * Indicates the exploration policy (selection during search) used
+     */
     protected Enums.ExplorationPolicy explorationPolicy;
 
-    /** Indicates the epsilon of epsilon-greedy (when used) */
+    /**
+     * Indicates the epsilon of epsilon-greedy (when used)
+     */
     protected final float explorationEpsilon = .05f;
 
-    /** Transposition Table used to store the nodes */
+    /**
+     * Transposition Table used to store the nodes
+     */
     protected TranspositionTableStampCompleted TT = null;
 
-    /** Number of bits used for primary key of the transposition table */
+    /**
+     * Number of bits used for primary key of the transposition table
+     */
     protected int numBitsPrimaryCode = 12;
 
-    /** Number of iterations performed by the bot during the last search */
+    /**
+     * Number of iterations performed by the bot during the last search
+     */
     protected int iterations;
 
-    /** Indicates the selection policy (selection of final move) used */
+    /**
+     * Indicates the selection policy (selection of final move) used
+     */
     protected Enums.SelectionPolicy selectionPolicy;
 
-    /** GameStateEvaluator used to evaluate non-terminal leaf nodes, should be a neural network */
+    /**
+     * GameStateEvaluator used to evaluate non-terminal leaf nodes, should be a neural network
+     */
     protected final ClassicTerminalStateEvaluator classicTerminalStateEvaluator = new ClassicTerminalStateEvaluator();
 
     //-------------------------------------------------------------------------
@@ -58,6 +76,7 @@ public class descentNNCompletedTraining extends NNBot {
     /**
      * Constructor with MultiLayerNetwork (DeepLearning4J) as input (uses epsilon-greedy exploration policy and
      * safest selection policy).
+     *
      * @param net MultiLayerNetwork (DeepLearning4J) used for training
      */
     public descentNNCompletedTraining(MultiLayerNetwork net) {
@@ -75,22 +94,22 @@ public class descentNNCompletedTraining extends NNBot {
      * Selects and returns an action to play based on completed descent. The search algorithm evaluates all children
      * batched (which increases the iterations when using NNs (compared to individual evaluations)).
      *
-     * @param game Reference to the game we're playing.
-     * @param context Copy of the context containing the current state of the game
-     * @param MaxSeconds Max number of seconds before a move should be selected.
-     * Values less than 0 mean there is no time limit.
+     * @param game          Reference to the game we're playing.
+     * @param context       Copy of the context containing the current state of the game
+     * @param MaxSeconds    Max number of seconds before a move should be selected.
+     *                      Values less than 0 mean there is no time limit.
      * @param maxIterations Max number of iterations before a move should be selected.
-     * Values less than 0 mean there is no iteration limit.
-     * @param maxDepth Max search depth before a move should be selected.
-     * Values less than 0 mean there is no search depth limit.
+     *                      Values less than 0 mean there is no iteration limit.
+     * @param maxDepth      Max search depth before a move should be selected.
+     *                      Values less than 0 mean there is no search depth limit.
      * @return Preferred move.
      */
     @Override
     public Move selectAction
-            (
-                    final Game game, final Context context, final double MaxSeconds,
-                    final int maxIterations, final int maxDepth
-            ) {
+    (
+            final Game game, final Context context, final double MaxSeconds,
+            final int maxIterations, final int maxDepth
+    ) {
         // Determine maximum iterations and stop time
         long stopTime = (MaxSeconds > 0.0) ? System.currentTimeMillis() + (long) (MaxSeconds * 1000) : Long.MAX_VALUE;
         int maxIts = (maxIterations >= 0) ? maxIterations : Integer.MAX_VALUE;
@@ -128,10 +147,10 @@ public class descentNNCompletedTraining extends NNBot {
      * batched (which increases the iterations when using NNs (compared to individual evaluations)), while also
      * keeping track of the trainings data in the designated transposition table.
      *
-     * @param context Copy of the context containing the current state of the game
+     * @param context          Copy of the context containing the current state of the game
      * @param maximisingPlayer ID of the player to maximise (always player one)
-     * @param stopTime The time to terminate the iteration
-     * @param depth Current depth of UBFM
+     * @param stopTime         The time to terminate the iteration
+     * @param depth            Current depth of UBFM
      * @return Backpropagated estimated value, indicating how good the position is
      */
     private float descent_iteration(Context context, final int maximisingPlayer, final long stopTime, int depth) {
@@ -146,7 +165,7 @@ public class descentNNCompletedTraining extends NNBot {
             this.TT.store(zobrist, 1, this.classicTerminalStateEvaluator.evaluate(context, 1),
                     outputScore, depth - 1, null);
 
-            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                 inputNN = this.leafEvaluator.boardToInput(context);
                 this.TTTraining.store(zobrist, outputScore, depth, inputNN.data().asFloat());
             }
@@ -188,7 +207,7 @@ public class descentNNCompletedTraining extends NNBot {
                                 this.classicTerminalStateEvaluator.evaluate(contextCopy, 1),
                                 moveScore, 1));
 
-                        if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                        if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                             inputNN = this.leafEvaluator.boardToInput(contextCopy);
                             this.TTTraining.store(zobristCopy, moveScore, depth, inputNN.data().asFloat());
                         }
@@ -228,7 +247,7 @@ public class descentNNCompletedTraining extends NNBot {
                 this.TT.store(zobrist, resolution, bestCompletedMove.completion, outputScore,
                         depth - 1, sortedCompletedMoves);
 
-                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                     inputNN = this.leafEvaluator.boardToInput(context);
                     this.TTTraining.store(zobrist, outputScore, depth, inputNN.data().asFloat());
                 }
@@ -266,12 +285,11 @@ public class descentNNCompletedTraining extends NNBot {
                 this.TT.store(zobrist, resolution, bestCompletedMove.completion, outputScore,
                         depth - 1, sortedCompletedMoves);
 
-                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                     inputNN = this.leafEvaluator.boardToInput(context);
                     this.TTTraining.store(zobrist, outputScore, depth, inputNN.data().asFloat());
                 }
-            }
-            else {
+            } else {
                 outputScore = tableData.value;
             }
         }
@@ -284,7 +302,7 @@ public class descentNNCompletedTraining extends NNBot {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override
@@ -301,7 +319,7 @@ public class descentNNCompletedTraining extends NNBot {
      * Get the best action to play in the actual game based on the selection policy used
      *
      * @param rootTableData Table from the root node in the transposition table
-     * @param maximising Indicates if the player is maximising
+     * @param maximising    Indicates if the player is maximising
      * @return The best scored move according to the selection policy
      */
     protected CompletedMove finalMoveSelection(StampTTDataCompleted rootTableData, boolean maximising) {
@@ -309,7 +327,7 @@ public class descentNNCompletedTraining extends NNBot {
 
         switch (this.selectionPolicy) {
             case BEST:
-                if (maximising){
+                if (maximising) {
                     return sortedCompletedMoves.stream().max(Comparator.comparing(CompletedMove::getCompletion)
                             .thenComparing(CompletedMove::getScore)
                             .thenComparing(CompletedMove::getNbVisits)).get();
@@ -319,7 +337,7 @@ public class descentNNCompletedTraining extends NNBot {
                             .thenComparing(CompletedMove::getNegativeNbVisits)).get();
                 }
             case SAFEST:
-                if (maximising){
+                if (maximising) {
                     return sortedCompletedMoves.stream().max(Comparator.comparing(CompletedMove::getCompletion)
                             .thenComparing(CompletedMove::getNbVisits)
                             .thenComparing(CompletedMove::getScore)).get();

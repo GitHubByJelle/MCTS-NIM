@@ -1,6 +1,5 @@
 package MCTSStrategies.Wrapper;
 
-import MCTSStrategies.Node.implicitNode;
 import other.move.Move;
 import search.mcts.MCTS;
 import search.mcts.finalmoveselection.FinalMoveSelectionStrategy;
@@ -16,13 +15,16 @@ public final class debugFinalSelectionWrapper implements FinalMoveSelectionStrat
 
     //-------------------------------------------------------------------------
 
-    /** The used FinalMoveSelectionStrategy */
+    /**
+     * The used FinalMoveSelectionStrategy
+     */
     FinalMoveSelectionStrategy finalMoveSelectionStrategy;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructor with FinalMoveSelectionStrategy as input
+     *
      * @param finalMoveSelectionStrategy Ludii's FinalMoveSelectionStrategy class
      */
     public debugFinalSelectionWrapper(FinalMoveSelectionStrategy finalMoveSelectionStrategy) {
@@ -33,7 +35,7 @@ public final class debugFinalSelectionWrapper implements FinalMoveSelectionStrat
      * Prints the move selected, values of the root node, and values of the children nodes
      * before selecting the final move
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts     Ludii's MCTS class
      * @param rootNode Node representing the game position in which the move needs to be selected
      * @return The best move to play according to the FinalMoveSelectionStrategy
      */
@@ -55,16 +57,15 @@ public final class debugFinalSelectionWrapper implements FinalMoveSelectionStrat
         for (int i = 0; i < rootNode.numLegalMoves(); i++) {
             final BaseNode child = rootNode.childForNthLegalMove(i);
 
-            System.out.printf((i+1) + ") " + child);
+            System.out.printf((i + 1) + ") " + child);
 
             // If selected, add selected behind the print, else nothing
-            if (rootNode.nthLegalMove(i).equals(bestMove)){
+            if (rootNode.nthLegalMove(i).equals(bestMove)) {
                 System.out.print(" (selected)\n");
                 selected = (i + 1);
                 value = child.expectedScore(bestMove.mover());
                 visits = child.numVisits();
-            }
-            else {
+            } else {
                 System.out.print("\n");
             }
         }

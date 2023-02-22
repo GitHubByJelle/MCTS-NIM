@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 public class Playground {
     /**
      * Main class which runs a tournament of a single bot pair.
+     *
      * @param args All inputs for the tournament. A .proporties file with the following inputs is expected
      *             (see configurations/template.proporties):
      *             String agentClassOne: Name of the class of the first agent
@@ -46,7 +47,7 @@ public class Playground {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // Check if os is Linux (server), if so use both GPU
-        if (System.getProperty("os.name") == "Linux"){
+        if (System.getProperty("os.name") == "Linux") {
             CudaEnvironment.getInstance().getConfiguration().allowMultiGPU(true);
         }
 
@@ -81,15 +82,15 @@ public class Playground {
      *
      * @param agentClassOne Name of the class of the first agent
      * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param numGames Total number of games played
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param agentOneNN    Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param agentTwoNN    Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName      Name of the game (as used by Ludii)
+     * @param numGames      Total number of games played
+     * @param maxSeconds    Maximum number of time per move (in seconds) (-1 means no limit)
      * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
+     * @param maxDepth      Maximum searched depth per move (-1 means no limit)
      * @param printProgress Print progress of the number of games played
-     * @param printResult Print the results of the tournament
+     * @param printResult   Print the results of the tournament
      */
     public static void playTournament(final String agentClassOne, final String agentClassTwo,
                                       String agentOneNN, String agentTwoNN, String gameName,
@@ -107,15 +108,15 @@ public class Playground {
      *
      * @param agentClassOne Name of the class of the first agent
      * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param numGames Total number of games played
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param agentOneNN    Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param agentTwoNN    Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName      Name of the game (as used by Ludii)
+     * @param numGames      Total number of games played
+     * @param maxSeconds    Maximum number of time per move (in seconds) (-1 means no limit)
      * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
+     * @param maxDepth      Maximum searched depth per move (-1 means no limit)
      * @param printProgress Print progress of the number of games played
-     * @param printResult Print the results of the tournament
+     * @param printResult   Print the results of the tournament
      */
     public static void playMultipleGames(final String agentClassOne, final String agentClassTwo,
                                          String agentOneNN, String agentTwoNN, String gameName,
@@ -164,12 +165,12 @@ public class Playground {
      *
      * @param agentClassOne Name of the class of the first agent
      * @param agentClassTwo Name of the class of the second agent
-     * @param agentOneNN Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
-     * @param agentTwoNN Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
-     * @param gameName Name of the game (as used by Ludii)
-     * @param maxSeconds Maximum number of time per move (in seconds) (-1 means no limit)
+     * @param agentOneNN    Path to the NN of the first agent (only required and accepted when agent has "NN" in its name)
+     * @param agentTwoNN    Path to the NN of the second agent (only required and accepted when agent has "NN" in its name)
+     * @param gameName      Name of the game (as used by Ludii)
+     * @param maxSeconds    Maximum number of time per move (in seconds) (-1 means no limit)
      * @param maxIterations Maximum number of iterations per move (-1 means no limit)
-     * @param maxDepth Maximum searched depth per move (-1 means no limit)
+     * @param maxDepth      Maximum searched depth per move (-1 means no limit)
      * @return playerID of the winner
      */
     public static int playSingleGame(final String agentClassOne, final String agentClassTwo, String agentOneNN,

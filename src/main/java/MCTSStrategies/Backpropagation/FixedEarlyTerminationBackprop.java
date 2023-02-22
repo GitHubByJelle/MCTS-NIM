@@ -11,8 +11,6 @@ import search.mcts.MCTS;
 import search.mcts.backpropagation.BackpropagationStrategy;
 import search.mcts.nodes.BaseNode;
 
-import java.util.Arrays;
-
 // Backpropagates the value of the evaluation function after a fixed number of steps
 // PLEASE NOTE: ASSUMPTION IS MADE OF TWO PLAYERS (can save a lot of time when using NN as leaf evaluator)
 
@@ -24,7 +22,9 @@ public class FixedEarlyTerminationBackprop extends BackpropagationStrategy {
 
     //-------------------------------------------------------------------------
 
-    /** GameStateEvaluator to evaluate leaf nodes */
+    /**
+     * GameStateEvaluator to evaluate leaf nodes
+     */
     GameStateEvaluator leafEvaluator;
 
     //-------------------------------------------------------------------------
@@ -40,11 +40,11 @@ public class FixedEarlyTerminationBackprop extends BackpropagationStrategy {
      * Instead of returning a win or loss it returns the value of an evaluation function, unless a terminal
      * node is found
      *
-     * @param mcts Ludii's mcts base class
-     * @param startNode The last seen node during the play-out
-     * @param context Ludii's context
-     * @param utilities Initial utilities value indicating null, the terminal value for player 1, and the terminal
-     *                  value for player 2
+     * @param mcts            Ludii's mcts base class
+     * @param startNode       The last seen node during the play-out
+     * @param context         Ludii's context
+     * @param utilities       Initial utilities value indicating null, the terminal value for player 1, and the terminal
+     *                        value for player 2
      * @param numPlayoutMoves Number of moves made in play-out
      */
     public void computeUtilities(MCTS mcts, BaseNode startNode, Context context, double[] utilities, int numPlayoutMoves) {

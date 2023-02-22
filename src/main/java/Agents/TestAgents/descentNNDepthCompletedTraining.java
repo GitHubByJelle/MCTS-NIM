@@ -6,14 +6,15 @@ import game.Game;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import utils.Enums.ExplorationPolicy;
 import utils.Enums.SelectionPolicy;
-import utils.TranspositionTableStamp;
 import utils.TranspositionTableStampCompleted;
 
-/** Selects the best move to play based by using the batched Neural Network variant of the implemented completed descent
+/**
+ * Selects the best move to play based by using the batched Neural Network variant of the implemented completed descent
  * algorithm in combination with the additive depth heuristic proposed in Cohen-Solal, Q. (2020). Learning to play
  * two-player perfect-information games without knowledge. arXiv preprint arXiv:2008.01188. It is implemented
  * to additionally store the trainings data found after searching. This allows the search algorithm to be used in the
- * descent framework */
+ * descent framework
+ */
 public class descentNNDepthCompletedTraining extends descentNNCompletedTraining {
 
     /**
@@ -32,7 +33,7 @@ public class descentNNDepthCompletedTraining extends descentNNCompletedTraining 
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

@@ -13,7 +13,8 @@ import other.move.Move;
 import other.trial.Trial;
 import utils.Enums;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates games positions by playing games with random bots
@@ -26,7 +27,7 @@ public class RandomGameStateCreator {
      * @param numPlies number of plies to play
      * @return Neural network input (DeepLearning4J) of game position
      */
-    public static INDArray createBoard(int numPlies){
+    public static INDArray createBoard(int numPlies) {
         // Create game environment
         Game game = GameLoader.loadGameFromName("Breakthrough.lud");
         Trial trial = new Trial(game);
@@ -84,7 +85,7 @@ public class RandomGameStateCreator {
      * @param numPlies number of plies to play
      * @return Ludii's context of game position
      */
-    public static Context createContext(int numPlies){
+    public static Context createContext(int numPlies) {
         // Create game environment
         Game game = GameLoader.loadGameFromName("Breakthrough.lud");
         Trial trial = new Trial(game);
@@ -138,7 +139,7 @@ public class RandomGameStateCreator {
      *
      * @return Neural network input (DeepLearning4J) of terminal game position
      */
-    public static INDArray createFinalBoard(){
+    public static INDArray createFinalBoard() {
         // Create game environment
         Game game = GameLoader.loadGameFromName("Breakthrough.lud");
         Trial trial = new Trial(game);
@@ -198,7 +199,7 @@ public class RandomGameStateCreator {
      * @param agents List of the agents to play the game
      * @return Ludii's context of the terminal game position
      */
-    public static Context createFinalContext(final List<AI> agents){
+    public static Context createFinalContext(final List<AI> agents) {
         // Create game environment
         Game game = GameLoader.loadGameFromName("Breakthrough.lud");
         Trial trial = new Trial(game);
@@ -244,11 +245,11 @@ public class RandomGameStateCreator {
      * Generates Ludii's context of games position by playing with given bots with a specific amount
      * of plies before a terminal game position has been reached.
      *
-     * @param agents List of the agents to play the game
+     * @param agents         List of the agents to play the game
      * @param pliesBeforeWin Number of plies before terminal game position
      * @return Ludii's context of the game position
      */
-    public static Context createPreFinalContext(List<AI> agents, final int pliesBeforeWin){
+    public static Context createPreFinalContext(List<AI> agents, final int pliesBeforeWin) {
         // Play a single game with the given agents
         Context context = RandomGameStateCreator.createFinalContext(agents);
 

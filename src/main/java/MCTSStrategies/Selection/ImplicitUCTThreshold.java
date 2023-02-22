@@ -23,10 +23,14 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Threshold to switch from MAST to implicit UCT */
+    /**
+     * Threshold to switch from MAST to implicit UCT
+     */
     protected int threshold;
 
-    /** Epsilon used for epsilon-greedy MAST */
+    /**
+     * Epsilon used for epsilon-greedy MAST
+     */
     protected float epsilon = .05f;
 
     //-------------------------------------------------------------------------
@@ -35,8 +39,8 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value, exploration constant and threshold to switch as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
-     * @param threshold Threshold to switch from MAST to implicit UCT
+     * @param explorationConstant       Exploration constant
+     * @param threshold                 Threshold to switch from MAST to implicit UCT
      */
     public ImplicitUCTThreshold(double influenceEstimatedMinimax, double explorationConstant, int threshold) {
         this.explorationConstant = explorationConstant;
@@ -48,7 +52,7 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
      * Selects the index of a child of the current node to traverse to based on epsilon-greedy MAST below the
      * given threshold and based on implicit UCT above the given threshold
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -57,16 +61,16 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
         double unvisitedValueEstimate = current.valueEstimateUnvisitedChildren(moverAgent);
 
         // Check if below threshold, if so select with epsilon-greedy MAST
-        if (current.numVisits() < this.threshold){
+        if (current.numVisits() < this.threshold) {
             // If below epsilon return random
-            if (ThreadLocalRandom.current().nextFloat() < this.epsilon){
+            if (ThreadLocalRandom.current().nextFloat() < this.epsilon) {
                 return ThreadLocalRandom.current().nextInt(numChildren);
             }
             // Else return based on MAST
@@ -78,21 +82,21 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
         double exploit;
         double explore;
         double estimatedValue;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
-            double uctValue = (1 - this.influenceEstimatedMinimax) *  exploit +
+            double uctValue = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue +
                     this.explorationConstant * explore;
             if (uctValue > bestValue) {
@@ -124,19 +128,16 @@ public class ImplicitUCTThreshold extends ImplicitUCT {
      *
      * @author Dennis Soemers, adapted by Jelle Jansen
      */
-    protected static class MASTIndexSelector
-    {
+    protected static class MASTIndexSelector {
         public static int selectIndex
                 (
                         final BaseNode current,
                         final MCTS mcts
-                )
-        {
+                ) {
             Context context = current.contextRef();
             int numLegalMoves = current.numLegalMoves();
             final FVector actionScores = new FVector(numLegalMoves);
-            for (int i = 0; i < numLegalMoves; ++i)
-            {
+            for (int i = 0; i < numLegalMoves; ++i) {
                 final MCTS.ActionStatistics actionStats = mcts.getOrCreateActionStatsEntry(
                         new MCTS.MoveKey(current.nthLegalMove(i), context.trial().numMoves()));
 

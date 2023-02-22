@@ -23,16 +23,24 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Weight of Progressive bias (based on intial value Ludii implementation, see ProgressiveBias) */
+    /**
+     * Weight of Progressive bias (based on intial value Ludii implementation, see ProgressiveBias)
+     */
     protected final double progressiveWeight = 10;
 
-    /** Threshold number of playouts that a node must have had for its AMAF values to be used */
+    /**
+     * Threshold number of playouts that a node must have had for its AMAF values to be used
+     */
     protected final int ref;
 
-    /** Hyperparameter used in computation of weight for AMAF term */
+    /**
+     * Hyperparameter used in computation of weight for AMAF term
+     */
     protected final double bias;
 
-    /** Reference node in current MCTS simulation (one per thread, in case of multi-threaded MCTS) */
+    /**
+     * Reference node in current MCTS simulation (one per thread, in case of multi-threaded MCTS)
+     */
     protected ThreadLocal<BaseNode> currentRefNode = ThreadLocal.withInitial(() -> null);
 
     //-------------------------------------------------------------------------
@@ -47,8 +55,8 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
     /**
      * Constructor with threshold number, weight used in computation AMAF, and exploration constant as input
      *
-     * @param ref Threshold number of playouts that a node must have had for its AMAF values to be used
-     * @param bias Hyperparameter used in computation of weight for AMAF term
+     * @param ref                 Threshold number of playouts that a node must have had for its AMAF values to be used
+     * @param bias                Hyperparameter used in computation of weight for AMAF term
      * @param explorationConstant Exploration constant
      */
     public ProgressiveBiasGRAVE(final int ref, final double bias, double explorationConstant) {
@@ -62,7 +70,7 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
      * and GRAVE as implemented by Ludii. However, this implementation uses the GameStateEvaluators, which makes it able to run Progressive Bias
      * with multiple evaluators. On top of that, it uses the minimax backpropagated values as implicit UCT.
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -71,7 +79,7 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -89,7 +97,7 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
         double meanAMAF;
         double beta;
         double estimatedScore;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 meanScore = unvisitedValueEstimate;
@@ -97,11 +105,11 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
                 meanAMAF = 0.0;
                 beta = 0.0;
                 estimatedScore = this.progressiveWeight *
-                        ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                        ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 meanScore = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
                 estimatedScore = (this.progressiveWeight * estimatedValue) / numVisits;
@@ -109,14 +117,12 @@ public class ProgressiveBiasGRAVE extends ImplicitUCT {
                 final Move move = child.parentMove();
                 final BaseNode.NodeStatistics graveStats = currentRefNode.get().graveStats(new MCTS.MoveKey(move, current.contextRef().trial().numMoves()));
 
-                if (graveStats == null)
-                {
+                if (graveStats == null) {
                     // In single-threaded MCTS this should always be a bug,
                     // but in multi-threaded MCTS it can happen
                     meanAMAF = 0.0;
                     beta = 0.0;
-                }
-                else {
+                } else {
                     final double graveScore = graveStats.accumulatedScore;
                     final int graveVisits = graveStats.visitCount;
                     meanAMAF = graveScore / graveVisits;

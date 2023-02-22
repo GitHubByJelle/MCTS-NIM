@@ -1,6 +1,8 @@
 package Agents;
 
-import Evaluator.*;
+import Evaluator.ClassicTerminalStateEvaluator;
+import Evaluator.MSLeafEvaluator;
+import Evaluator.TanhEvaluatorWrapper;
 import game.Game;
 import utils.data_structures.transposition_table.TranspositionTable;
 
@@ -20,7 +22,7 @@ public class AlphaBetaSearchMS extends AlphaBetaSearchNN {
      * Perform desired initialisation before starting to play a game
      * Sets all needed variables for alpha beta search w.r.t. to the GameStateEvaluators useds
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

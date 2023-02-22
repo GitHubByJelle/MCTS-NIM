@@ -13,7 +13,9 @@ public class ImplicitUCTBoundedAlphaDecrease extends ImplicitUCTAlphaDecrease {
 
     //-------------------------------------------------------------------------
 
-    /** Minimum bound for influence of the estimates values */
+    /**
+     * Minimum bound for influence of the estimates values
+     */
     protected double minimumInfluenceEstimatedMinimax;
 
     //-------------------------------------------------------------------------
@@ -22,8 +24,8 @@ public class ImplicitUCTBoundedAlphaDecrease extends ImplicitUCTAlphaDecrease {
      * Constructor with influence of the implicit minimax value, exploration constant and slope as input
      *
      * @param initialInfluenceEstimatedMinimax Initial influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
-     * @param slope Slope of decrease of alpha
+     * @param explorationConstant              Exploration constant
+     * @param slope                            Slope of decrease of alpha
      * @param minimumInfluenceEstimatedMinimax Minimum bound for influence of the estimates values
      */
     public ImplicitUCTBoundedAlphaDecrease(double initialInfluenceEstimatedMinimax, double explorationConstant,
@@ -37,10 +39,10 @@ public class ImplicitUCTBoundedAlphaDecrease extends ImplicitUCTAlphaDecrease {
      * Adjust alpha to decrease over-time until a minimum value is reached
      *
      * @param initialAlpha Initial influence of the estimated values
-     * @param numVisits Number of visits to current node
+     * @param numVisits    Number of visits to current node
      * @return Adjusted alpha
      */
-    protected double adjustAlpha(double initialAlpha, int numVisits){
+    protected double adjustAlpha(double initialAlpha, int numVisits) {
         return Math.max(this.minimumInfluenceEstimatedMinimax,
                 initialAlpha - this.slope * numVisits * initialAlpha);
     }

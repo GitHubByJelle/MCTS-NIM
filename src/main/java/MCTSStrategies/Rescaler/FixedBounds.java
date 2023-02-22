@@ -5,14 +5,18 @@ import utils.Value;
 /**
  * Class which rescales the given values between a fixed minimum and maximum bound
  */
-public class FixedBounds implements Rescaler{
+public class FixedBounds implements Rescaler {
 
     //-------------------------------------------------------------------------
 
-    /** Maximum bound of rescaled values */
+    /**
+     * Maximum bound of rescaled values
+     */
     float maxBound;
 
-    /** Minimum bound of rescaled values */
+    /**
+     * Minimum bound of rescaled values
+     */
     float minBound;
 
     //-------------------------------------------------------------------------
@@ -23,7 +27,7 @@ public class FixedBounds implements Rescaler{
      * @param maxBound Maximum bound of rescaled values
      * @param minBound Minimum bound of rescaled values
      */
-    public FixedBounds(float maxBound, float minBound){
+    public FixedBounds(float maxBound, float minBound) {
         this.maxBound = maxBound;
         this.minBound = minBound;
     }
@@ -45,7 +49,7 @@ public class FixedBounds implements Rescaler{
         // Determine mix and max value
         for (int i = 0; i < n; i++) {
             double v = values[i];
-            if (v > max){
+            if (v > max) {
                 max = v;
             } else if (v < min) {
                 min = v;

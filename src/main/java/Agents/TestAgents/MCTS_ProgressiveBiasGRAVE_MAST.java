@@ -32,10 +32,10 @@ public class MCTS_ProgressiveBiasGRAVE_MAST extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
-    public void initAI(Game game, int playerID){
+    public void initAI(Game game, int playerID) {
         super.initParent(game, playerID);
 
         this.setLeafEvaluator(new TanhEvaluatorWrapper(new MSLeafEvaluator(game),

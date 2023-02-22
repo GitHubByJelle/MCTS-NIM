@@ -11,20 +11,26 @@ import java.util.List;
 
 /**
  * Transposition Table which can be used to store data for learning (training a NN).
- *
+ * <p>
  * Based on implementation from Ludii
  */
 public class TranspositionTableLearning {
 
     //-------------------------------------------------------------------------
 
-    /** Number of bits used for primary key */
+    /**
+     * Number of bits used for primary key
+     */
     private final int numBitsPrimaryCode;
 
-    /** Number of entries in the TT (size of TT is 2^number of bits)*/
+    /**
+     * Number of entries in the TT (size of TT is 2^number of bits)
+     */
     private final int maxNumEntries;
 
-    /** Table which stores all Transposition entries */
+    /**
+     * Table which stores all Transposition entries
+     */
     private learningTTEntry[] table;
 
     //-------------------------------------------------------------------------
@@ -56,6 +62,7 @@ public class TranspositionTableLearning {
 
     /**
      * Checks if a table is allocated
+     *
      * @return True if a tables is allocated, false otherwise
      */
     public boolean isAllocated() {
@@ -92,9 +99,9 @@ public class TranspositionTableLearning {
      * Stores the given information into the transposition table
      *
      * @param fullHash hash code to store
-     * @param value Value which needs to be stored (value found after searching)
-     * @param depth Search depth of hash
-     * @param inputNN The input for the NN representing the game position of the hash
+     * @param value    Value which needs to be stored (value found after searching)
+     * @param depth    Search depth of hash
+     * @param inputNN  The input for the NN representing the game position of the hash
      */
     public void store(long fullHash, float value, int depth, float[] inputNN) {
         // Get entry based on primary key
@@ -126,6 +133,7 @@ public class TranspositionTableLearning {
 
     /**
      * Getter for the table of entries
+     *
      * @return table of entries
      */
     public learningTTEntry[] getTable() {
@@ -134,6 +142,7 @@ public class TranspositionTableLearning {
 
     /**
      * Count number of entries in the Transposition Table
+     *
      * @return the number of entries
      */
     public int nbEntries() {
@@ -154,21 +163,23 @@ public class TranspositionTableLearning {
      * @param fullHash hash code of game position
      * @return Entry belonging to the game position
      */
-    public learningTTEntry getEntry(long fullHash){
+    public learningTTEntry getEntry(long fullHash) {
         int idx = (int) (fullHash >>> 64 - this.numBitsPrimaryCode);
         return this.table[idx];
     }
 
     /**
      * Class for all entries in the Transposition Table, existing of TTData
-     *
+     * <p>
      * Based on implementation from Ludii
      */
     public static final class learningTTEntry {
 
         //-------------------------------------------------------------------------
 
-        /** List of Transposition Table Data of a single full hash code */
+        /**
+         * List of Transposition Table Data of a single full hash code
+         */
         public List<learningTTData> data = new ArrayList(3);
 
         //-------------------------------------------------------------------------
@@ -187,16 +198,24 @@ public class TranspositionTableLearning {
 
         //-------------------------------------------------------------------------
 
-        /** Full hash code */
+        /**
+         * Full hash code
+         */
         public long fullHash = -1L;
 
-        /** Value found after searching */
+        /**
+         * Value found after searching
+         */
         public float value = Float.NaN;
 
-        /** Search depth of the full hash code */
+        /**
+         * Search depth of the full hash code
+         */
         public int depth = -1;
 
-        /** The input for the NN representing the game position of the hash */
+        /**
+         * The input for the NN representing the game position of the hash
+         */
         public float[] inputNN = null;
 
         //-------------------------------------------------------------------------
@@ -205,9 +224,9 @@ public class TranspositionTableLearning {
          * Constructor to create the Transposition Table Data
          *
          * @param fullHash Full hash code
-         * @param value Value found after searching
-         * @param depth Search depth of the full hash code
-         * @param inputNN The input for the NN representing the game position of the hash
+         * @param value    Value found after searching
+         * @param depth    Search depth of the full hash code
+         * @param inputNN  The input for the NN representing the game position of the hash
          */
         public learningTTData(long fullHash, float value, int depth, float[] inputNN) {
             this.fullHash = fullHash;

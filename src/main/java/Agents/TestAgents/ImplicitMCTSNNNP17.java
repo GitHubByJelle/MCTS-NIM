@@ -4,7 +4,6 @@ import Evaluator.ClassicTerminalStateEvaluator;
 import Evaluator.MultiNeuralNetworkLeafEvaluator;
 import MCTSStrategies.Backpropagation.FixedEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
-import MCTSStrategies.Selection.ImplicitUCT;
 import MCTSStrategies.Selection.ImplicitUCTInitialV;
 import Training.LearningManager;
 import game.Game;
@@ -19,7 +18,9 @@ public class ImplicitMCTSNNNP17 extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -27,6 +28,7 @@ public class ImplicitMCTSNNNP17 extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (influence estimated value = 0.8, exploration=0.001, QInit=estimated value of child, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public ImplicitMCTSNNNP17(String pathName) {
@@ -45,7 +47,7 @@ public class ImplicitMCTSNNNP17 extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

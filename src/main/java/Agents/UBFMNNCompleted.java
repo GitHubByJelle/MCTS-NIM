@@ -18,17 +18,23 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static utils.CompletedMove.*;
 
-/** Selects the best move to play based by using batched Neural Network evaluations in
+/**
+ * Selects the best move to play based by using batched Neural Network evaluations in
  * combination with completed UBFM. The "completion" adds a solver to the search. The evaluation is performed batched,
- * resulting in better performance when using a neural network */
+ * resulting in better performance when using a neural network
+ */
 public class UBFMNNCompleted extends UBFMHFCompleted {
 
     //-------------------------------------------------------------------------
 
-    /** GameStateEvaluator used to evaluate non-terminal leaf nodes, should be a neural network */
+    /**
+     * GameStateEvaluator used to evaluate non-terminal leaf nodes, should be a neural network
+     */
     protected NeuralNetworkLeafEvaluator leafEvaluator;
 
-    /** Path to the neural network to used by default */
+    /**
+     * Path to the neural network to used by default
+     */
     protected String pathName = "NN_models/Network_bSize128_nEp1_nGa1563_2022-11-12-04-50-34.bin";
 
     //-------------------------------------------------------------------------
@@ -60,10 +66,10 @@ public class UBFMNNCompleted extends UBFMHFCompleted {
      * Performs single iteration of the completed UBFM algorithm. The search algorithm evaluates all children
      * batched (which increases the iterations when using NNs (compared to individual evaluations)).
      *
-     * @param context Copy of the context containing the current state of the game
+     * @param context          Copy of the context containing the current state of the game
      * @param maximisingPlayer ID of the player to maximise (always player one)
-     * @param stopTime The time to terminate the iteration
-     * @param depth Current depth of UBFM
+     * @param stopTime         The time to terminate the iteration
+     * @param depth            Current depth of UBFM
      * @return Backpropagated estimated value, indicating how good the position is
      */
     @Override
@@ -81,7 +87,7 @@ public class UBFMNNCompleted extends UBFMHFCompleted {
             // Check if state is in Transposition Table
             List<CompletedMove> sortedCompletedMoves = null;
             StampTTDataCompleted tableData = this.TT.retrieve(zobrist);
-            if (tableData == null || tableData.resolution == 0){
+            if (tableData == null || tableData.resolution == 0) {
                 if (tableData != null && tableData.sortedScoredMoves != null) {
                     sortedCompletedMoves = new ArrayList(tableData.sortedScoredMoves);
                 }
@@ -174,8 +180,7 @@ public class UBFMNNCompleted extends UBFMHFCompleted {
 
                 this.TT.store(zobrist, resolution, bestCompletedMove.completion, outputScore,
                         depth - 1, sortedCompletedMoves);
-            }
-            else {
+            } else {
                 outputScore = tableData.value;
             }
         }
@@ -188,7 +193,7 @@ public class UBFMNNCompleted extends UBFMHFCompleted {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

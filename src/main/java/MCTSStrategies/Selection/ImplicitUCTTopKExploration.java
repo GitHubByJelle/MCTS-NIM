@@ -22,7 +22,9 @@ public class ImplicitUCTTopKExploration extends ImplicitUCTTopKRandom {
 
     //-------------------------------------------------------------------------
 
-    /** Second exploration constant */
+    /**
+     * Second exploration constant
+     */
     protected double explorationConstantTwo;
 
     //-------------------------------------------------------------------------
@@ -31,9 +33,9 @@ public class ImplicitUCTTopKExploration extends ImplicitUCTTopKRandom {
      * Constructor with influence of the implicit minimax value, exploration constants and K as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstantOne First exploration constant
-     * @param explorationConstantTwo Second exploration constant
-     * @param K Number of best-children to select for second comparison
+     * @param explorationConstantOne    First exploration constant
+     * @param explorationConstantTwo    Second exploration constant
+     * @param K                         Number of best-children to select for second comparison
      */
     public ImplicitUCTTopKExploration(double influenceEstimatedMinimax, double explorationConstantOne,
                                       double explorationConstantTwo, int K) {
@@ -45,13 +47,13 @@ public class ImplicitUCTTopKExploration extends ImplicitUCTTopKRandom {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
     public int select(MCTS mcts, BaseNode current) {
         // Initialise needed variables
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -63,21 +65,21 @@ public class ImplicitUCTTopKExploration extends ImplicitUCTTopKRandom {
         double explore;
         double estimatedValue;
         double[] uctValues = new double[numChildren];
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
-            uctValues[i] = (1 - this.influenceEstimatedMinimax) *  exploit +
+            uctValues[i] = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue +
                     this.explorationConstant * explore;
         }
@@ -94,16 +96,16 @@ public class ImplicitUCTTopKExploration extends ImplicitUCTTopKRandom {
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(topKIndices[i]); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(topKIndices[i]); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
-            double uctValue = (1 - this.influenceEstimatedMinimax) *  exploit +
+            double uctValue = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue +
                     this.explorationConstantTwo * explore;
 

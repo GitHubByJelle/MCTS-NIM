@@ -20,22 +20,34 @@ public class NeuralNetworkLeafEvaluator extends GameStateEvaluator {
 
     //-------------------------------------------------------------------------
 
-    /** MultiLayerNetwork from DeepLearning4J */
+    /**
+     * MultiLayerNetwork from DeepLearning4J
+     */
     protected MultiLayerNetwork net;
 
-    /** INDArray (input for NN) that can be used to convert Ludii's context to NN input */
+    /**
+     * INDArray (input for NN) that can be used to convert Ludii's context to NN input
+     */
     protected INDArray initialInput;
 
-    /** Total number of squares on the board */
+    /**
+     * Total number of squares on the board
+     */
     protected int numSquares;
 
-    /** Total number of rows and columns (Squared Board is assumed) */
+    /**
+     * Total number of rows and columns (Squared Board is assumed)
+     */
     protected int numRowsCols;
 
-    /** Number of players, assumption of two-player games is made */
+    /**
+     * Number of players, assumption of two-player games is made
+     */
     protected int numPlayers = 2;
 
-    /** Number of rows/columns with padding (single row is used for all Networks) */
+    /**
+     * Number of rows/columns with padding (single row is used for all Networks)
+     */
     protected int padding = 1;
 
     //-------------------------------------------------------------------------
@@ -44,8 +56,8 @@ public class NeuralNetworkLeafEvaluator extends GameStateEvaluator {
      * Constructor with parameter for game and neural network
      *
      * @param game Ludii's game
-     * @param net DL4J MultiLayerNetwork that needs to be used (can be loaded with the LearningManager).
-     *            The network should always predict with respect to player 1.
+     * @param net  DL4J MultiLayerNetwork that needs to be used (can be loaded with the LearningManager).
+     *             The network should always predict with respect to player 1.
      */
     public NeuralNetworkLeafEvaluator(Game game, MultiLayerNetwork net) {
         // Declare game information
@@ -65,7 +77,7 @@ public class NeuralNetworkLeafEvaluator extends GameStateEvaluator {
      * The first player (playerID = 1) is assumed to be the maximizing player. The estimated value of the second player
      * (playerID = 2) will be multiplied by -1, since the NN always predicts with respect to playerID 1.
      *
-     * @param context Ludii's context of the current game state
+     * @param context          Ludii's context of the current game state
      * @param maximisingPlayer Indicates the playerID of the player to move (either 1 or 2)
      * @return A float value indicating how good the game state is (higher is better)
      */
@@ -81,7 +93,7 @@ public class NeuralNetworkLeafEvaluator extends GameStateEvaluator {
      * The first player (playerID = 1) is assumed to be the maximizing player. The estimated value of the second player
      * (playerID = 2) will be multiplied by -1, since the NN always predicts with respect to playerID 1.
      *
-     * @param context Ludii's context of the current game state
+     * @param context          Ludii's context of the current game state
      * @param nonTerminalMoves Index of all moves that are non-terminal (so need to be converted to NN input)
      * @param maximisingPlayer Indicates the playerID of the player to move (either 1 or 2)
      * @return A float array with a value for each non-terminal move indicating how good
@@ -99,7 +111,7 @@ public class NeuralNetworkLeafEvaluator extends GameStateEvaluator {
      * For each non-terminal move, it generates a channel for each player, and changes the value of a position to 1
      * if a piece of the player is located at that position.
      *
-     * @param context Ludii's context of the current game state
+     * @param context          Ludii's context of the current game state
      * @param nonTerminalMoves Index of all moves that are non-terminal (so need to be converted to NN input)
      * @return Multi-channeled matrix of the game state, which can be used for the NN.
      */

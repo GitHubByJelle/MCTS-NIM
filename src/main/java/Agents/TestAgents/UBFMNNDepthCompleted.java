@@ -1,37 +1,24 @@
 package Agents;
 
 import Evaluator.AdditiveDepthTerminalStateEvaluator;
-import Evaluator.ClassicTerminalStateEvaluator;
-import Evaluator.GameStateEvaluator;
 import Evaluator.NeuralNetworkLeafEvaluator;
 import Training.LearningManager;
 import game.Game;
-import main.collections.FastArrayList;
-import other.AI;
-import other.context.Context;
-import other.move.Move;
-import utils.CompletedMove;
 import utils.Enums;
-import utils.TranspositionTableStamp;
 import utils.TranspositionTableStampCompleted;
-import utils.TranspositionTableStampCompleted.StampTTDataCompleted;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static utils.CompletedMove.*;
-
-/** Selects the best move to play based by using the batched Neural Network variant of the implemented completed UBFM
+/**
+ * Selects the best move to play based by using the batched Neural Network variant of the implemented completed UBFM
  * algorithm in combination with the additive depth heuristic proposed in Cohen-Solal, Q. (2020). Learning to play
- * two-player perfect-information games without knowledge. arXiv preprint arXiv:2008.01188. */
+ * two-player perfect-information games without knowledge. arXiv preprint arXiv:2008.01188.
+ */
 public class UBFMNNDepthCompleted extends UBFMNNCompleted {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network to used by default (NN trained with additive depth heuristic) */
+    /**
+     * Path to the neural network to used by default (NN trained with additive depth heuristic)
+     */
     protected String pathName = "NN_models/Network_bSize128_nEp1_nGa1552_2022-11-13-16-51-52.bin";
 
     //-------------------------------------------------------------------------
@@ -64,7 +51,7 @@ public class UBFMNNDepthCompleted extends UBFMNNCompleted {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

@@ -24,13 +24,19 @@ public class implicitNode extends DeterministicNode {
 
     //-------------------------------------------------------------------------
 
-    /** Stores the index of the best estimated value based on a leaf evaluator (of the GameStatEvaluator class) */
+    /**
+     * Stores the index of the best estimated value based on a leaf evaluator (of the GameStatEvaluator class)
+     */
     protected int bestEstimatedIndex = -1;
 
-    /** Stores the best estimated value based on a leaf evaluator (of the GameStatEvaluator class) */
+    /**
+     * Stores the best estimated value based on a leaf evaluator (of the GameStatEvaluator class)
+     */
     protected double bestEstimatedValue = -9999999;
 
-    /** Stores the initial estimated value of all children based on a leaf evaluator (of the GameStatEvaluator class) */
+    /**
+     * Stores the initial estimated value of all children based on a leaf evaluator (of the GameStatEvaluator class)
+     */
     protected double[] initialEstimatedValues = null;
 
     //-------------------------------------------------------------------------
@@ -38,14 +44,14 @@ public class implicitNode extends DeterministicNode {
     /**
      * Constructor to create a node which can be used for implicit MCTS implementations
      *
-     * @param mcts Ludii's MCTS class
-     * @param parent Parent node of current node
-     * @param parentMove Node from parent to current node
+     * @param mcts                    Ludii's MCTS class
+     * @param parent                  Parent node of current node
+     * @param parentMove              Node from parent to current node
      * @param parentMoveWithoutConseq Node from parent to current node
-     * @param context Ludii's context class representating the game state
-     * @param leafEvaluator GameStateEvaluator which can be used to evaluate non-terminal game states
-     * @param terminalStateEvaluator GameStateEvaluator which can be used to evaluate terminal game states
-     * @param evaluateBatched Indicates if the leaf evaluator should calculate the children batched (useful for NNs)
+     * @param context                 Ludii's context class representating the game state
+     * @param leafEvaluator           GameStateEvaluator which can be used to evaluate non-terminal game states
+     * @param terminalStateEvaluator  GameStateEvaluator which can be used to evaluate terminal game states
+     * @param evaluateBatched         Indicates if the leaf evaluator should calculate the children batched (useful for NNs)
      */
     public implicitNode(MCTS mcts, BaseNode parent, Move parentMove, Move parentMoveWithoutConseq, Context context,
                         GameStateEvaluator leafEvaluator, GameStateEvaluator terminalStateEvaluator,
@@ -65,7 +71,7 @@ public class implicitNode extends DeterministicNode {
             double value;
             for (int i = 0; i < this.numLegalMoves(); i++) {
                 value = this.initialEstimatedValues[i];
-                if (value > this.bestEstimatedValue){
+                if (value > this.bestEstimatedValue) {
                     this.bestEstimatedValue = value;
                     this.bestEstimatedIndex = i;
                 }
@@ -77,17 +83,18 @@ public class implicitNode extends DeterministicNode {
         }
 
         // If a parent exist, update the best estimated value (if needed) in a minimax fashion
-        if (this.parent != null){
-            ((implicitNode)this.parent).implicitMinimaxBackup(this);
+        if (this.parent != null) {
+            ((implicitNode) this.parent).implicitMinimaxBackup(this);
         }
     }
 
     /**
      * Updates the best estimated value of a node using the minimax framework, iff it is required to update the value.
      * The value if updated when a better best value has been found, or the best child received a new value.
+     *
      * @param fromChild Child node with the updated values
      */
-    protected void implicitMinimaxBackup(implicitNode fromChild){
+    protected void implicitMinimaxBackup(implicitNode fromChild) {
         // Take negative value (if mover changed) and check if best child got changed
         double backupValue = this.context.state().playerToAgent(this.context.state().mover()) ==
                 fromChild.context.state().playerToAgent(fromChild.context.state().mover()) ?
@@ -120,28 +127,28 @@ public class implicitNode extends DeterministicNode {
 //        System.out.println(this.legalMoves[this.bestHeuristicIndex] + " " + fromChild.parentMove + " " + bestChild);
 
         // If not current best child, but better value, change to new value
-        if (!bestChild && backupValue > this.bestEstimatedValue){
-            synchronized (this){
+        if (!bestChild && backupValue > this.bestEstimatedValue) {
+            synchronized (this) {
                 // Set best value
                 this.bestEstimatedValue = backupValue;
 
                 // Find index of new best move
                 for (int i = 0; i < this.numLegalMoves(); i++) {
-                    if (this.legalMoves[i].hashCode() == fromChild.parentMove.hashCode()){
+                    if (this.legalMoves[i].hashCode() == fromChild.parentMove.hashCode()) {
                         this.bestEstimatedIndex = i;
                         break;
                     }
                 }
 
                 // Update parent
-                if (this.parent != null){
-                    ((implicitNode)this.parent).implicitMinimaxBackup(this);
+                if (this.parent != null) {
+                    ((implicitNode) this.parent).implicitMinimaxBackup(this);
                 }
             }
         }
         // If best index got changed, look at all moves
         else if (bestChild) {
-            synchronized (this){
+            synchronized (this) {
                 double bestValue = Double.NEGATIVE_INFINITY;
                 int bestIndex = -1;
                 double value;
@@ -150,19 +157,17 @@ public class implicitNode extends DeterministicNode {
                     // So the child will be null. To prevent this from happening, check if index matches
                     if (i == this.bestEstimatedIndex) {
                         value = backupValue;
-                    }
-                    else if (this.children[i] ==  null){
+                    } else if (this.children[i] == null) {
                         value = this.initialEstimatedValues[i];
-                    }
-                    else {
+                    } else {
                         value = this.context.state().playerToAgent(this.context.state().mover()) ==
                                 this.children[i].contextRef().state().playerToAgent(
                                         this.children[i].contextRef().state().mover()) ?
-                                ((implicitNode)this.children[i]).bestEstimatedValue :
-                                -((implicitNode)this.children[i]).bestEstimatedValue;
+                                ((implicitNode) this.children[i]).bestEstimatedValue :
+                                -((implicitNode) this.children[i]).bestEstimatedValue;
                     }
 
-                    if (value > bestValue){
+                    if (value > bestValue) {
                         bestValue = value;
                         bestIndex = i;
                     }
@@ -173,8 +178,8 @@ public class implicitNode extends DeterministicNode {
                 this.bestEstimatedIndex = bestIndex;
 
                 // Update parent
-                if (this.parent != null){
-                    ((implicitNode)this.parent).implicitMinimaxBackup(this);
+                if (this.parent != null) {
+                    ((implicitNode) this.parent).implicitMinimaxBackup(this);
                 }
             }
         }
@@ -192,20 +197,19 @@ public class implicitNode extends DeterministicNode {
     /**
      * Evaluates the children based on the leaf and terminal evaluator
      *
-     * @param leafEvaluator GameStateEvaluator which can be used to evaluate non-terminal game states
+     * @param leafEvaluator          GameStateEvaluator which can be used to evaluate non-terminal game states
      * @param terminalStateEvaluator GameStateEvaluator which can be used to evaluate terminal game states
-     * @param evaluateBatched Indicates if the leaf evaluator should calculate the children batched (useful for NNs)
-     * @param mover ID of the player to move
+     * @param evaluateBatched        Indicates if the leaf evaluator should calculate the children batched (useful for NNs)
+     * @param mover                  ID of the player to move
      * @return An array with the evaluation of all children of the current game position
      */
     protected double[] evaluateChildren(GameStateEvaluator leafEvaluator, GameStateEvaluator terminalStateEvaluator,
-                                        boolean evaluateBatched, int mover){
+                                        boolean evaluateBatched, int mover) {
         double[] result;
-        if (evaluateBatched){
+        if (evaluateBatched) {
             result = EvaluatorUtils.EvaluateChildrenBatched(this.context, this.legalMoves, mover,
                     (NeuralNetworkLeafEvaluator) leafEvaluator, terminalStateEvaluator);
-        }
-        else {
+        } else {
             result = EvaluatorUtils.EvaluateChildren(this.context, this.legalMoves, mover, leafEvaluator,
                     terminalStateEvaluator);
         }
@@ -231,12 +235,13 @@ public class implicitNode extends DeterministicNode {
 
     /**
      * Converts the current node to a string
+     *
      * @return String providing information of the current node
      */
     @Override
     public String toString() {
         final int mover = this.contextRef().state().playerToAgent(this.contextRef().state().mover()) == 1 ? 2 : 1;
-        if (this == null){
+        if (this == null) {
             return "unvisited";
         }
 
@@ -249,6 +254,7 @@ public class implicitNode extends DeterministicNode {
 
     /**
      * Getter for the best estimated value
+     *
      * @return the best estimated value
      */
     public double getBestEstimatedValue() {

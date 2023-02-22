@@ -3,13 +3,10 @@ package MCTSStrategies.MoveSelector;
 import Evaluator.GameStateEvaluator;
 import game.Game;
 import main.collections.FastArrayList;
-import metadata.ai.heuristics.Heuristics;
-import other.RankUtils;
 import other.context.Context;
 import other.context.TempContext;
 import other.move.Move;
 import other.playout.PlayoutMoveSelector;
-import utils.Enums;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,10 +21,14 @@ public class EvaluatedMoveSelector extends PlayoutMoveSelector {
 
     //-------------------------------------------------------------------------
 
-    /** GameStatEvaluator to evaluate leaf nodes */
+    /**
+     * GameStatEvaluator to evaluate leaf nodes
+     */
     protected GameStateEvaluator leafEvaluator = null;
 
-    /** GameStatEvaluator to evaluate terminal nodes */
+    /**
+     * GameStatEvaluator to evaluate terminal nodes
+     */
     protected GameStateEvaluator terminalStateEvaluator = null;
 
     //-------------------------------------------------------------------------
@@ -42,9 +43,9 @@ public class EvaluatedMoveSelector extends PlayoutMoveSelector {
      * Selects the move for the given game position according to the GameStateEvaluators of the leaf and
      * terminal nodes which can be used during play-out
      *
-     * @param context Ludii's context of the current game position
-     * @param maybeLegalMoves Moves which can be legal
-     * @param p Current player to move
+     * @param context           Ludii's context of the current game position
+     * @param maybeLegalMoves   Moves which can be legal
+     * @param p                 Current player to move
      * @param isMoveReallyLegal Function to check if move is really legal for given game
      * @return Best move according to GameStateEvaluators
      */
@@ -56,29 +57,29 @@ public class EvaluatedMoveSelector extends PlayoutMoveSelector {
         Iterator iterator = maybeLegalMoves.iterator();
 
         // While a next legal move exist, keep going
-        while(true) {
+        while (true) {
             Move move;
             do {
                 // If all legal moves have been seen, return random best move with randomness as tie-breaker
                 if (!iterator.hasNext()) {
                     if (bestMoves.size() > 0) {
-                        return (Move)bestMoves.get(ThreadLocalRandom.current().nextInt(bestMoves.size()));
+                        return (Move) bestMoves.get(ThreadLocalRandom.current().nextInt(bestMoves.size()));
                     }
 
                     return null;
                 }
 
-                move = (Move)iterator.next();
-            } while(!isMoveReallyLegal.checkMove(move));
+                move = (Move) iterator.next();
+            } while (!isMoveReallyLegal.checkMove(move));
 
             // If the move is legal, evaluate the childs
             TempContext copyContext = new TempContext(context);
             game.apply(copyContext, move);
             float heuristicScore = 0.0F;
             if (!copyContext.trial().over() && copyContext.active(p)) {
-                heuristicScore = this.leafEvaluator.evaluate(copyContext,p);
+                heuristicScore = this.leafEvaluator.evaluate(copyContext, p);
             } else {
-                heuristicScore = this.terminalStateEvaluator.evaluate(copyContext,p);
+                heuristicScore = this.terminalStateEvaluator.evaluate(copyContext, p);
             }
 
             // If the score is better than the best value found, update best move

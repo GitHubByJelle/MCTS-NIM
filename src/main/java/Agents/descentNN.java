@@ -21,7 +21,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import static utils.descentUtils.addScoreToSortedScoredMoves;
 import static utils.descentUtils.getBestAction;
 
-/** Selects the best move to play based by using neural network evaluations in
+/**
+ * Selects the best move to play based by using neural network evaluations in
  * combination with descent as proposed in Cohen-Solal, Q. (2020). Learning to play two-player perfect-information
  * games without knowledge. arXiv preprint arXiv:2008.01188. Please note, the evaluations are batched which improves
  * the number of iterations when using a neural network.
@@ -30,7 +31,9 @@ public class descentNN extends descent {
 
     //-------------------------------------------------------------------------
 
-    /** Neural Network evaluator used to evaluate non-terminal leaf nodes batched */
+    /**
+     * Neural Network evaluator used to evaluate non-terminal leaf nodes batched
+     */
     protected NeuralNetworkLeafEvaluator leafEvaluator;
 
     //-------------------------------------------------------------------------
@@ -60,10 +63,10 @@ public class descentNN extends descent {
      * Performs single iteration of the descent algorithm. The search algorithm evaluates all children
      * batched (which increases the iterations when using NNs (compared to individual evaluations)).
      *
-     * @param context Copy of the context containing the current state of the game
+     * @param context          Copy of the context containing the current state of the game
      * @param maximisingPlayer ID of the player to maximise (always player one)
-     * @param stopTime The time to terminate the iteration
-     * @param depth Current depth of UBFM
+     * @param stopTime         The time to terminate the iteration
+     * @param depth            Current depth of UBFM
      * @return Backpropagated estimated value, indicating how good the position is
      */
     protected float descent_iteration(Context context, final int maximisingPlayer, final long stopTime, int depth) {
@@ -174,7 +177,7 @@ public class descentNN extends descent {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

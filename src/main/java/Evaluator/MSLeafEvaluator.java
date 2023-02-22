@@ -13,20 +13,25 @@ import other.context.Context;
  * heuristic evaluations using implicit minimax backups. In 2014 IEEE Conference on Computational Intelligence
  * and Games (pp. 1-8). IEEE.
  */
-public class MSLeafEvaluator extends GameStateEvaluator{
+public class MSLeafEvaluator extends GameStateEvaluator {
 
     //-------------------------------------------------------------------------
 
-    /** Total number of squares on the board */
+    /**
+     * Total number of squares on the board
+     */
     protected int numSquares;
 
-    /** Total number of rows and columns (Squared Board is assumed) */
+    /**
+     * Total number of rows and columns (Squared Board is assumed)
+     */
     protected int numRowsCols;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructur with the game as input
+     *
      * @param game Ludii's game
      */
     public MSLeafEvaluator(Game game) {
@@ -38,11 +43,11 @@ public class MSLeafEvaluator extends GameStateEvaluator{
     /**
      * Evaluates the current context using the evaluation function proposed by Maarten Schadd, but implemented
      * as Lanctot.
-     *
+     * <p>
      * For each player the furthest row is calculated which is worth 2.5 * the number of rows. Each piece is worth 10.
      * The difference between two players is calculated.
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return
      */
@@ -61,18 +66,18 @@ public class MSLeafEvaluator extends GameStateEvaluator{
         int row;
         for (int i = 0; i < this.numSquares; i++) {
             value = chunkSet.getChunk(i);
-            if (value == 1){
+            if (value == 1) {
                 score += 10;
 
-                row = (int)i / this.numRowsCols;
-                if (row > playerOneBestRow){
+                row = (int) i / this.numRowsCols;
+                if (row > playerOneBestRow) {
                     playerOneBestRow = row;
                 }
             } else if (value == 2) {
                 score -= 10;
 
-                row = (int)i / this.numRowsCols;
-                if (row < playerTwoBestRow){
+                row = (int) i / this.numRowsCols;
+                if (row < playerTwoBestRow) {
                     playerTwoBestRow = row;
                 }
             }
@@ -82,7 +87,7 @@ public class MSLeafEvaluator extends GameStateEvaluator{
         score += (playerOneBestRow - (this.numRowsCols - 1 - playerTwoBestRow)) * 2.5f;
 
         // If not player 1, minimize
-        if (maximisingPlayer != 1){
+        if (maximisingPlayer != 1) {
             score *= -1;
         }
 

@@ -2,12 +2,9 @@ package Agents;
 
 import MCTSStrategies.Backpropagation.InitialNoPlayoutTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
-import MCTSStrategies.Playout.EpsilonGreedyPlayout;
 import MCTSStrategies.Selection.ImplicitUCT;
-import MCTSStrategies.Wrapper.TrainingPlayoutWrapper;
 import MCTSStrategies.Wrapper.TrainingSelectionWrapper;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import search.mcts.backpropagation.MonteCarloBackprop;
 import search.mcts.playout.RandomPlayout;
 
 /**

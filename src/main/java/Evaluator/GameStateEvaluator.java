@@ -10,7 +10,7 @@ public abstract class GameStateEvaluator {
     /**
      * Should be implemented in all evaluators, to evaluate game states
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return A float value indicating how good the game state is (higher is better).
      */

@@ -1,13 +1,11 @@
 package Experiments;
 
-import Agents.MCTS;
 import game.Game;
 import other.AI;
 import other.GameLoader;
 import other.context.Context;
 import other.move.Move;
 import other.trial.Trial;
-import utils.DebugTools;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -53,9 +51,9 @@ public class IterationTest {
     /**
      * Run all bots N times on the initial board position of the given game.
      *
-     * @param N Number of times to search
+     * @param N        Number of times to search
      * @param gameName Name of the game
-     * @param bots Array of strings of the used bots
+     * @param bots     Array of strings of the used bots
      * @throws ClassNotFoundException
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
@@ -83,9 +81,9 @@ public class IterationTest {
     /**
      * Run bot N times on the given game position
      *
-     * @param N Number of times to search
+     * @param N       Number of times to search
      * @param context Given game position
-     * @param bot String of used bot
+     * @param bot     String of used bot
      * @throws ClassNotFoundException
      * @throws NoSuchMethodException
      * @throws InvocationTargetException

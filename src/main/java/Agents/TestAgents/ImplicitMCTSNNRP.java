@@ -1,13 +1,8 @@
 package Agents;
 
 import Evaluator.ClassicTerminalStateEvaluator;
-import Evaluator.GameStateEvaluator;
 import Evaluator.MultiNeuralNetworkLeafEvaluator;
-import Evaluator.ParallelNeuralNetworkLeafEvaluator;
-import MCTSStrategies.Backpropagation.FixedEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
-import MCTSStrategies.FinalMoveSelection.SecureChild;
-import MCTSStrategies.Playout.EpsilonGreedyPlayout;
 import MCTSStrategies.Selection.ImplicitUCT;
 import Training.LearningManager;
 import game.Game;
@@ -23,7 +18,9 @@ public class ImplicitMCTSNNRP extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -31,6 +28,7 @@ public class ImplicitMCTSNNRP extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (solver=true, influence estimated value = 0.8, exploration=sqrt(2), QInit=PARENT, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public ImplicitMCTSNNRP(String pathName) {
@@ -46,8 +44,9 @@ public class ImplicitMCTSNNRP extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string, the influence of the estimated value,
      * and exploration as input. (solver=true, QInit=PARENT, 4 threads)
-     * @param pathName Path to the desired neural network
-     * @param alpha influence of the estimated value
+     *
+     * @param pathName            Path to the desired neural network
+     * @param alpha               influence of the estimated value
      * @param explorationConstant exploration constant
      */
     public ImplicitMCTSNNRP(String pathName, float alpha, float explorationConstant) {
@@ -64,7 +63,7 @@ public class ImplicitMCTSNNRP extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

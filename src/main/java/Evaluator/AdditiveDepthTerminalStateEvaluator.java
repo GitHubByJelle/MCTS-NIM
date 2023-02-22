@@ -7,7 +7,7 @@ import other.context.Context;
  * Generates a terminal state evaluator based on the additive depth heuristic proposed by Cohen-Solal in:
  * Cohen-Solal, Q. (2020). Learning to play two-player perfect-information games without knowledge.
  * arXiv preprint arXiv:2008.01188.
- *
+ * <p>
  * As opposed to the work of Cohen-Solal, this implementation returns a value between [-1 and 1], such that no changes
  * need to be made to the architecture of the NN
  */
@@ -15,7 +15,9 @@ public class AdditiveDepthTerminalStateEvaluator extends GameStateEvaluator {
 
     //-------------------------------------------------------------------------
 
-    /** Maximum number of plies for the total game */
+    /**
+     * Maximum number of plies for the total game
+     */
     private int maxPly;
 
     //-------------------------------------------------------------------------
@@ -33,7 +35,7 @@ public class AdditiveDepthTerminalStateEvaluator extends GameStateEvaluator {
      * Evaluates the current terminal state using the additive depth heuristic as proposed by Cohen-Solal.
      * It will return a 0 if the state is non-terminal
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return A float value indicating how good the game state is (higher is better)
      */

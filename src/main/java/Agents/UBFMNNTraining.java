@@ -20,33 +20,50 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static utils.descentUtils.*;
 
-/** Selects the best move to play based by using batched Neural Network evaluations in
+/**
+ * Selects the best move to play based by using batched Neural Network evaluations in
  * combination with UBFM as proposed in Cohen-Solal, Q. (2020). Learning to play two-player perfect-information
  * games without knowledge. arXiv preprint arXiv:2008.01188. It is implemented to additionally store the trainings data
- * found after searching. This allows the search algorithm to be used in the descent framework */
+ * found after searching. This allows the search algorithm to be used in the descent framework
+ */
 public class UBFMNNTraining extends NNBot {
 
     //-------------------------------------------------------------------------
 
-    /** Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.) */
-    protected int player = -1;;
+    /**
+     * Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.)
+     */
+    protected int player = -1;
+    ;
 
-    /** Indicates the exploration policy (selection during search) used */
+    /**
+     * Indicates the exploration policy (selection during search) used
+     */
     protected Enums.ExplorationPolicy explorationPolicy;
 
-    /** Indicates the epsilon of epsilon-greedy (when used) */
+    /**
+     * Indicates the epsilon of epsilon-greedy (when used)
+     */
     protected final float explorationEpsilon = .05f;
 
-    /** Transposition Table used to store the nodes */
+    /**
+     * Transposition Table used to store the nodes
+     */
     protected TranspositionTableStamp TT = null;
 
-    /** Number of bits used for primary key of the transposition table */
+    /**
+     * Number of bits used for primary key of the transposition table
+     */
     protected int numBitsPrimaryCode = 12;
 
-    /** Number of iterations performed by the bot during the last search */
+    /**
+     * Number of iterations performed by the bot during the last search
+     */
     protected int iterations;
 
-    /** Indicates the selection policy (selection of final move) used */
+    /**
+     * Indicates the selection policy (selection of final move) used
+     */
     protected Enums.SelectionPolicy selectionPolicy;
 
     //-------------------------------------------------------------------------
@@ -54,6 +71,7 @@ public class UBFMNNTraining extends NNBot {
     /**
      * Constructor with MultiLayerNetwork (DeepLearning4J) as input (uses epsilon-greedy exploration policy and
      * safest selection policy).
+     *
      * @param net MultiLayerNetwork (DeepLearning4J) used for training
      */
     public UBFMNNTraining(MultiLayerNetwork net) {
@@ -68,22 +86,22 @@ public class UBFMNNTraining extends NNBot {
      * Selects and returns an action to play based on UBFM. The search algorithm evaluates all children
      * batched (which increases the iterations when using NNs (compared to individual evaluations))
      *
-     * @param game Reference to the game we're playing.
-     * @param context Copy of the context containing the current state of the game
-     * @param MaxSeconds Max number of seconds before a move should be selected.
-     * Values less than 0 mean there is no time limit.
+     * @param game          Reference to the game we're playing.
+     * @param context       Copy of the context containing the current state of the game
+     * @param MaxSeconds    Max number of seconds before a move should be selected.
+     *                      Values less than 0 mean there is no time limit.
      * @param maxIterations Max number of iterations before a move should be selected.
-     * Values less than 0 mean there is no iteration limit.
-     * @param maxDepth Max search depth before a move should be selected.
-     * Values less than 0 mean there is no search depth limit.
+     *                      Values less than 0 mean there is no iteration limit.
+     * @param maxDepth      Max search depth before a move should be selected.
+     *                      Values less than 0 mean there is no search depth limit.
      * @return Preferred move.
      */
     @Override
     public Move selectAction
-            (
-                    final Game game, final Context context, final double MaxSeconds,
-                    final int maxIterations, final int maxDepth
-            ) {
+    (
+            final Game game, final Context context, final double MaxSeconds,
+            final int maxIterations, final int maxDepth
+    ) {
         // Determine maximum iterations and stop time
         long stopTime = (MaxSeconds > 0.0) ? System.currentTimeMillis() + (long) (MaxSeconds * 1000) : Long.MAX_VALUE;
         int maxIts = (maxIterations >= 0) ? maxIterations : Integer.MAX_VALUE;
@@ -118,10 +136,10 @@ public class UBFMNNTraining extends NNBot {
      * batched (which speeds up the iterations / sec when using NNs), while also keeping track of the traings data
      * in the designated transposition table.
      *
-     * @param context Copy of the context containing the current state of the game
+     * @param context          Copy of the context containing the current state of the game
      * @param maximisingPlayer ID of the player to maximise (always player one)
-     * @param stopTime The time to terminate the iteration
-     * @param depth Current depth of UBFM
+     * @param stopTime         The time to terminate the iteration
+     * @param depth            Current depth of UBFM
      * @return Backpropagated estimated value, indicating how good the position is
      */
     private float UBFM_iteration(Context context, final int maximisingPlayer, final long stopTime, int depth) {
@@ -135,7 +153,7 @@ public class UBFMNNTraining extends NNBot {
             // Add state to Transposition table
             this.TT.store(zobrist, outputScore, depth - 1, null);
 
-            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                 inputNN = this.leafEvaluator.boardToInput(context);
                 this.TTTraining.store(zobrist, outputScore, depth, inputNN.data().asFloat());
             }
@@ -170,7 +188,7 @@ public class UBFMNNTraining extends NNBot {
                         long zobristCopy = contextCopy.state().fullHash(contextCopy);
                         this.TT.store(zobristCopy, moveScore, depth - 1, null);
 
-                        if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                        if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                             inputNN = this.leafEvaluator.boardToInput(contextCopy);
                             this.TTTraining.store(zobristCopy, moveScore, depth, inputNN.data().asFloat());
                         }
@@ -215,7 +233,7 @@ public class UBFMNNTraining extends NNBot {
                 // Save to TT
                 this.TT.store(zobrist, sortedScoredMoves.get(0).score, depth - 1, sortedScoredMoves);
 
-                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                     inputNN = this.leafEvaluator.boardToInput(context);
                     this.TTTraining.store(zobrist, sortedScoredMoves.get(0).score, depth, inputNN.data().asFloat());
                 }
@@ -241,7 +259,7 @@ public class UBFMNNTraining extends NNBot {
 
             // Save to TT
             this.TT.store(zobrist, outputScore, depth - 1, sortedScoredMoves);
-            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                 inputNN = this.leafEvaluator.boardToInput(context);
                 this.TTTraining.store(zobrist, outputScore, depth, inputNN.data().asFloat());
             }
@@ -255,7 +273,7 @@ public class UBFMNNTraining extends NNBot {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

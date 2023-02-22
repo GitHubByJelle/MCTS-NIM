@@ -1,16 +1,13 @@
 package Agents;
 
-import Evaluator.*;
+import Evaluator.ClassicTerminalStateEvaluator;
+import Evaluator.MSLeafEvaluator;
+import Evaluator.TanhEvaluatorWrapper;
 import MCTSStrategies.Backpropagation.DynamicEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
-import MCTSStrategies.FinalMoveSelection.SecureChild;
 import MCTSStrategies.Playout.DynamicEpsilonGreedyPlayout;
 import MCTSStrategies.Selection.ImplicitUCT;
-import MCTSStrategies.Wrapper.IterationWrapper;
-import MCTSStrategies.Wrapper.debugFinalSelectionWrapper;
 import game.Game;
-import search.mcts.backpropagation.MonteCarloBackprop;
-import search.mcts.playout.RandomPlayout;
 
 /**
  * MCTS search algorithm with Implicit UCT, epsilon-greedy play-out with dynamic early termination (when |x| > bound,
@@ -37,10 +34,10 @@ public class ImplicitMCTS extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
-    public void initAI(Game game, int playerID){
+    public void initAI(Game game, int playerID) {
         super.initParent(game, playerID);
 
         this.setLeafEvaluator(new TanhEvaluatorWrapper(new MSLeafEvaluator(game),

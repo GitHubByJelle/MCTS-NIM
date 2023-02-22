@@ -6,7 +6,8 @@ import game.Game;
 import utils.Enums;
 import utils.TranspositionTableStamp;
 
-/** Selects the best move to play based by using pseudorandom number generator as evaluation function in
+/**
+ * Selects the best move to play based by using pseudorandom number generator as evaluation function in
  * combination with descent. Has been used as debug check.
  */
 public class descentRandom extends descent {
@@ -24,7 +25,7 @@ public class descentRandom extends descent {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

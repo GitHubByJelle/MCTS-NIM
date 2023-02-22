@@ -4,7 +4,6 @@
 //
 
 package utils;
-import utils.data_structures.ScoredMove;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,14 +14,16 @@ import java.util.List;
  * The TT stores the resolution, completion, score and number of visits.
  * Instead of deleting the entire TT (and tree), this implementation only removes the
  * "old" entries, which haven't been seen for the last few searches based on a stamp.
- *
+ * <p>
  * Based on implementation from Ludii
  */
-public class TranspositionTableStampCompleted extends TranspositionTableStamp{
+public class TranspositionTableStampCompleted extends TranspositionTableStamp {
 
     //-------------------------------------------------------------------------
 
-    /** Table which stores all Transposition entries */
+    /**
+     * Table which stores all Transposition entries
+     */
     protected StampTTEntryCompleted[] table;
 
     //-------------------------------------------------------------------------
@@ -94,11 +95,11 @@ public class TranspositionTableStampCompleted extends TranspositionTableStamp{
     /**
      * Stores the given information into the transposition table
      *
-     * @param fullHash hash code to store
-     * @param resolution The resolution (is the game position solved or not)
-     * @param completion The completion (is the game a loss, draw or win? (-1, 0, 1, respectively))
-     * @param value Value which needs to be stored (value found after searching)
-     * @param depth Search depth of hash
+     * @param fullHash             hash code to store
+     * @param resolution           The resolution (is the game position solved or not)
+     * @param completion           The completion (is the game a loss, draw or win? (-1, 0, 1, respectively))
+     * @param value                Value which needs to be stored (value found after searching)
+     * @param depth                Search depth of hash
      * @param sortedCompletedMoves List with sorted completed moves
      */
     public void store(long fullHash, float resolution, float completion, float value, int depth,
@@ -134,14 +135,16 @@ public class TranspositionTableStampCompleted extends TranspositionTableStamp{
 
     /**
      * Class for all entries in the Transposition Table, existing of TTData
-     *
+     * <p>
      * Based on implementation from Ludii
      */
     public static final class StampTTEntryCompleted {
 
         //-------------------------------------------------------------------------
 
-        /** List of Transposition Table Data of a single full hash code */
+        /**
+         * List of Transposition Table Data of a single full hash code
+         */
         public List<StampTTDataCompleted> data = new ArrayList(3);
 
         //-------------------------------------------------------------------------
@@ -160,13 +163,19 @@ public class TranspositionTableStampCompleted extends TranspositionTableStamp{
 
         //-------------------------------------------------------------------------
 
-        /** The resolution (is the game position solved or not) */
+        /**
+         * The resolution (is the game position solved or not)
+         */
         public float resolution = 0;
 
-        /** The completion (is the game a loss, draw or win? (-1, 0, 1, respectively)) */
+        /**
+         * The completion (is the game a loss, draw or win? (-1, 0, 1, respectively))
+         */
         public float completion = 0;
 
-        /** Sorted list with all completed moves (all legal moves in the game position) */
+        /**
+         * Sorted list with all completed moves (all legal moves in the game position)
+         */
         public List<CompletedMove> sortedScoredMoves = null;
 
         //-------------------------------------------------------------------------
@@ -174,16 +183,16 @@ public class TranspositionTableStampCompleted extends TranspositionTableStamp{
         /**
          * Constructor to create the Transposition Table Data with stamp for completed moves
          *
-         * @param fullHash Full hash code
-         * @param resolution The resolution (is the game position solved or not)
-         * @param completion The completion (is the game a loss, draw or win? (-1, 0, 1, respectively))
-         * @param value Value found after searching
-         * @param depth Search depth of the full hash code
+         * @param fullHash       Full hash code
+         * @param resolution     The resolution (is the game position solved or not)
+         * @param completion     The completion (is the game a loss, draw or win? (-1, 0, 1, respectively))
+         * @param value          Value found after searching
+         * @param depth          Search depth of the full hash code
          * @param CompletedMoves Sorted list with all completed moves (all legal moves in the game position)
-         * @param stamp Current stamp of the search
+         * @param stamp          Current stamp of the search
          */
         public StampTTDataCompleted(long fullHash, float resolution, float completion, float value,
-                           int depth, List<CompletedMove> CompletedMoves, int stamp) {
+                                    int depth, List<CompletedMove> CompletedMoves, int stamp) {
             super(fullHash, value, depth, null, stamp);
             this.completion = completion;
             this.resolution = resolution;

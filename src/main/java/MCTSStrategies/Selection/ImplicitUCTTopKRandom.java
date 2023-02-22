@@ -10,7 +10,6 @@ import other.state.State;
 import search.mcts.MCTS;
 import search.mcts.nodes.BaseNode;
 
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -21,7 +20,9 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Number of best-children to select */
+    /**
+     * Number of best-children to select
+     */
     protected int K;
 
     //-------------------------------------------------------------------------
@@ -30,8 +31,8 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value, exploration constant and K as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
-     * @param K Number of best-children to select for the uniform sample
+     * @param explorationConstant       Exploration constant
+     * @param K                         Number of best-children to select for the uniform sample
      */
     public ImplicitUCTTopKRandom(double influenceEstimatedMinimax, double explorationConstant, int K) {
         super(influenceEstimatedMinimax, explorationConstant);
@@ -42,14 +43,14 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
     public int select(MCTS mcts, BaseNode current) {
         // Initialise needed variables
         int bestIdx = -1;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -61,30 +62,30 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
         double explore;
         double estimatedValue;
         double[] uctValues = new double[numChildren];
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
-            uctValues[i] = (1 - this.influenceEstimatedMinimax) *  exploit +
+            uctValues[i] = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue +
                     this.explorationConstant * explore;
         }
 
         // Select random top element to play. Saves time when sorting since complexity is O(k*n)
-        int k = ThreadLocalRandom.current().nextInt(1,this.K+1);
+        int k = ThreadLocalRandom.current().nextInt(1, this.K + 1);
 
         // Get the index of the kth-best UCT value
-        return getTopKIndex(uctValues, k)[k-1];
+        return getTopKIndex(uctValues, k)[k - 1];
     }
 
     /**
@@ -92,10 +93,10 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
      * Partial Selection Sort algorithm. Complexity: O(n*k)
      *
      * @param array array to select the indices from
-     * @param k Number of top maximum values to get index from
+     * @param k     Number of top maximum values to get index from
      * @return Indices of top k maximum values of the given array
      */
-    protected int[] getTopKIndex(double[] array, int k){
+    protected int[] getTopKIndex(double[] array, int k) {
         // Create requires objects
         int n = array.length;
         int[] topKIndices = new int[k];
@@ -113,8 +114,8 @@ public class ImplicitUCTTopKRandom extends ImplicitUCT {
             maxIndex = i;
             maxValue = values[i];
             // Loop over (unsorted) values and select the best
-            for (int j = i+1; j < n; j++) {
-                if (values[j] > maxValue){
+            for (int j = i + 1; j < n; j++) {
+                if (values[j] > maxValue) {
                     maxIndex = j;
                     maxValue = values[j];
                 }

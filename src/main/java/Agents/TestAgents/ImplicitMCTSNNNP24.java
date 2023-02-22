@@ -5,7 +5,6 @@ import Evaluator.MultiNeuralNetworkLeafEvaluator;
 import MCTSStrategies.Backpropagation.FixedEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Rescaler.Softmax;
-import MCTSStrategies.Selection.ImplicitUCT;
 import MCTSStrategies.Selection.ImplicitUCTAlphaDecreaseRescaledExploration;
 import Training.LearningManager;
 import game.Game;
@@ -22,7 +21,9 @@ public class ImplicitMCTSNNNP24 extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -30,11 +31,12 @@ public class ImplicitMCTSNNNP24 extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (initial influence estimated value = 0.8, exploration=2, slope=0.05, QInit=PARENT, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public ImplicitMCTSNNNP24(String pathName) {
         super(new ImplicitUCTAlphaDecreaseRescaledExploration(.8, 2,
-                        new Softmax(), 1/20f),
+                        new Softmax(), 1 / 20f),
                 new RandomPlayout(0),
                 new FixedEarlyTerminationBackprop(), new RobustChild());
 
@@ -47,8 +49,9 @@ public class ImplicitMCTSNNNP24 extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string, the influence of the estimated value,
      * exploration value, and slope as input. (QInit=PARENT, 4 threads)
-     * @param pathName Path to the desired neural network
-     * @param alpha influence of the estimated value
+     *
+     * @param pathName            Path to the desired neural network
+     * @param alpha               influence of the estimated value
      * @param explorationConstant exploration constant
      */
     public ImplicitMCTSNNNP24(String pathName, float alpha, float explorationConstant, float slope) {
@@ -68,7 +71,7 @@ public class ImplicitMCTSNNNP24 extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

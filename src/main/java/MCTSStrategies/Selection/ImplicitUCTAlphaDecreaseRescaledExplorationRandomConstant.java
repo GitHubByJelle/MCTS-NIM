@@ -23,13 +23,19 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
 
     //-------------------------------------------------------------------------
 
-    /** Softmax rescaler */
+    /**
+     * Softmax rescaler
+     */
     Softmax rescaler;
 
-    /** Slope of the change of the influence of the estimated value */
+    /**
+     * Slope of the change of the influence of the estimated value
+     */
     protected double slope;
 
-    /** Random constant multiplier (uct is multiplied with 1+random constant) */
+    /**
+     * Random constant multiplier (uct is multiplied with 1+random constant)
+     */
     protected double randomConstant;
 
     //-------------------------------------------------------------------------
@@ -39,10 +45,10 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
      * constant as input
      *
      * @param initialInfluenceEstimatedMinimax Initial influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
-     * @param rescaler Softmax rescaler
-     * @param slope Slope of increase of alpha
-     * @param randomConstant Random constant multiplier (uct is multiplied with 1+random constant)
+     * @param explorationConstant              Exploration constant
+     * @param rescaler                         Softmax rescaler
+     * @param slope                            Slope of increase of alpha
+     * @param randomConstant                   Random constant multiplier (uct is multiplied with 1+random constant)
      */
     public ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant(double initialInfluenceEstimatedMinimax,
                                                                      double explorationConstant,
@@ -58,7 +64,7 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT with an increasing alpha
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -67,7 +73,7 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentVisits = (double)Math.max(1, current.sumLegalChildVisits());
+        double parentVisits = (double) Math.max(1, current.sumLegalChildVisits());
         double parentLog = Math.log(parentVisits);
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
@@ -79,7 +85,7 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
         for (int i = 0; i < numChildren; i++) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
-                estimatedValues[i] = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValues[i] = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 estimatedValues[i] = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
@@ -95,7 +101,7 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
         double explore;
         int numVisits;
         double alpha;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
@@ -104,11 +110,11 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = explorationProbs[i] * Math.sqrt(parentLog / (double)numVisits);
+                explore = explorationProbs[i] * Math.sqrt(parentLog / (double) numVisits);
             }
 
             alpha = this.adjustAlpha(this.influenceEstimatedMinimax, numVisits);
-            double uctValue = (1 - alpha) *  exploit +
+            double uctValue = (1 - alpha) * exploit +
                     alpha * estimatedValues[i] +
                     explore;
 
@@ -134,10 +140,10 @@ public class ImplicitUCTAlphaDecreaseRescaledExplorationRandomConstant extends I
      * Adjust alpha to increase over-time
      *
      * @param initialAlpha Initial influence of the estimated values
-     * @param numVisits Number of visits to current node
+     * @param numVisits    Number of visits to current node
      * @return Adjusted alpha
      */
-    protected double adjustAlpha(double initialAlpha, int numVisits){
+    protected double adjustAlpha(double initialAlpha, int numVisits) {
         return Math.max(0, initialAlpha - this.slope * numVisits * initialAlpha);
     }
 }

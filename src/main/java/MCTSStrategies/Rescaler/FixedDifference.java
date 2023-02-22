@@ -6,11 +6,13 @@ import utils.Value;
  * Class which rescales the given values between minimum and maximum with a fixed difference located around the
  * mean of the given values
  */
-public class FixedDifference implements Rescaler{
+public class FixedDifference implements Rescaler {
 
     //-------------------------------------------------------------------------
 
-    /** Allowed fixed difference between minimum and maximum value */
+    /**
+     * Allowed fixed difference between minimum and maximum value
+     */
     float fixedDifference;
 
     //-------------------------------------------------------------------------
@@ -20,7 +22,7 @@ public class FixedDifference implements Rescaler{
      *
      * @param fixedDifference Allowed fixed difference between minimum and maximum value
      */
-    public FixedDifference(float fixedDifference){
+    public FixedDifference(float fixedDifference) {
         this.fixedDifference = fixedDifference;
     }
 
@@ -43,7 +45,7 @@ public class FixedDifference implements Rescaler{
             double v = values[i];
             sum += v;
 
-            if (v > max){
+            if (v > max) {
                 max = v;
             } else if (v < min) {
                 min = v;

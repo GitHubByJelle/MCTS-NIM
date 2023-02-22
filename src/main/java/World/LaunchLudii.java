@@ -1,13 +1,6 @@
 package World;
 
 import Agents.*;
-import Agents.ImplicitMCTS;
-import Agents.ImplicitMCTSSolver;
-import Agents.MCTSSolver;
-import Agents.MCTSTest.MCTS_UCB1_Random;
-import Agents.UBFMHF;
-import Agents.UBFMHFCompleted;
-import Agents.descentHF;
 import app.StartDesktopApp;
 import manager.ai.AIRegistry;
 
@@ -17,6 +10,7 @@ import manager.ai.AIRegistry;
 public class LaunchLudii {
     /**
      * Main class which can be used to load the GUI of Ludii, while adding own bots
+     *
      * @param args No input required
      */
     public static void main(final String args[]) {

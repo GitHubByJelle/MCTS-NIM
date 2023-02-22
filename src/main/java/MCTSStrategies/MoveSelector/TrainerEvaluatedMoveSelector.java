@@ -1,10 +1,8 @@
 package MCTSStrategies.MoveSelector;
 
 import Evaluator.NeuralNetworkLeafEvaluator;
-import MCTSStrategies.MoveSelector.BatchedEvaluatedMoveSelector;
 import game.Game;
 import main.collections.FastArrayList;
-import other.RankUtils;
 import other.context.Context;
 import other.context.TempContext;
 import other.move.Move;
@@ -24,7 +22,9 @@ public class TrainerEvaluatedMoveSelector extends BatchedEvaluatedMoveSelector {
 
     //-------------------------------------------------------------------------
 
-    /** Transposition table which can be used to store all encountered terminal and non-leaf states */
+    /**
+     * Transposition table which can be used to store all encountered terminal and non-leaf states
+     */
     TranspositionTableLearning TTTraining;
 
     //-------------------------------------------------------------------------
@@ -41,9 +41,9 @@ public class TrainerEvaluatedMoveSelector extends BatchedEvaluatedMoveSelector {
      * terminal nodes which can be used during play-out. It collects all data to evaluate the children batched, while
      * also saving all terminal and non-leaf nodes.
      *
-     * @param context Ludii's context of the current game position
-     * @param maybeLegalMoves Moves which can be legal
-     * @param p Current player to move
+     * @param context           Ludii's context of the current game position
+     * @param maybeLegalMoves   Moves which can be legal
+     * @param p                 Current player to move
      * @param isMoveReallyLegal Function to check if move is really legal for given game
      * @return Best move according to GameStateEvaluators
      */
@@ -78,12 +78,11 @@ public class TrainerEvaluatedMoveSelector extends BatchedEvaluatedMoveSelector {
                     // Store all terminal states in TT (similar to descent)
                     long zobristChild = copyContext.state().fullHash(copyContext);
                     boolean nullValue = this.TTTraining.getEntry(zobristChild) == null;
-                    if (nullValue){
+                    if (nullValue) {
                         this.TTTraining.store(zobristChild, heuristicScore * multiplier, 999,
                                 ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(copyContext).data().asFloat());
-                    }
-                    else {
-                        synchronized (this.TTTraining.getEntry(zobristChild)){
+                    } else {
+                        synchronized (this.TTTraining.getEntry(zobristChild)) {
                             this.TTTraining.store(zobristChild, heuristicScore * multiplier, 999,
                                     ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(copyContext).data().asFloat());
                         }
@@ -104,12 +103,11 @@ public class TrainerEvaluatedMoveSelector extends BatchedEvaluatedMoveSelector {
         if (terminal) {
             // Store best Value of context in TT (if terminal)
             boolean nullValue = this.TTTraining.getEntry(zobrist) == null;
-            if (nullValue){
+            if (nullValue) {
                 this.TTTraining.store(zobrist, bestValue * multiplier, 999,
                         ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(context).data().asFloat());
-            }
-            else {
-                synchronized (this.TTTraining.getEntry(zobrist)){
+            } else {
+                synchronized (this.TTTraining.getEntry(zobrist)) {
                     this.TTTraining.store(zobrist, bestValue * multiplier, 999,
                             ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(context).data().asFloat());
                 }
@@ -135,12 +133,11 @@ public class TrainerEvaluatedMoveSelector extends BatchedEvaluatedMoveSelector {
 
         // Store bestValue found after search in TT
         boolean nullValue = this.TTTraining.getEntry(zobrist) == null;
-        if (nullValue){
+        if (nullValue) {
             this.TTTraining.store(zobrist, bestValue * multiplier, 999,
                     ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(context).data().asFloat());
-        }
-        else {
-            synchronized (this.TTTraining.getEntry(zobrist)){
+        } else {
+            synchronized (this.TTTraining.getEntry(zobrist)) {
                 this.TTTraining.store(zobrist, bestValue * multiplier, 999,
                         ((NeuralNetworkLeafEvaluator) leafEvaluator).boardToInput(context).data().asFloat());
             }

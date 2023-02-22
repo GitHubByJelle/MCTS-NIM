@@ -15,13 +15,16 @@ public class HeuristicLeafEvaluator extends GameStateEvaluator {
 
     //-------------------------------------------------------------------------
 
-    /** Ludii's heuristic evaluation function */
+    /**
+     * Ludii's heuristic evaluation function
+     */
     Heuristics heuristicFunction;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructor requiring the game as input
+     *
      * @param game Ludii's game
      */
     public HeuristicLeafEvaluator(Game game) {
@@ -47,7 +50,7 @@ public class HeuristicLeafEvaluator extends GameStateEvaluator {
      * Evaluates the current context using the Ludii's heuristics.
      * It calculates the difference between the current player, and the opponents.
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return
      */
@@ -81,7 +84,7 @@ public class HeuristicLeafEvaluator extends GameStateEvaluator {
     /**
      * Generates an array of opponents for the player, based on the number of players
      *
-     * @param player playerID of player being evaluated
+     * @param player     playerID of player being evaluated
      * @param numPlayers Number of players in game
      * @return An array of opponents for the player
      */

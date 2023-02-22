@@ -3,7 +3,6 @@ package MCTSStrategies.MoveSelector;
 import Evaluator.NeuralNetworkLeafEvaluator;
 import game.Game;
 import main.collections.FastArrayList;
-import other.RankUtils;
 import other.context.Context;
 import other.context.TempContext;
 import other.move.Move;
@@ -31,9 +30,9 @@ public class BatchedEvaluatedMoveSelector extends EvaluatedMoveSelector {
      * Selects the move for the given game position according to the GameStateEvaluators of the leaf and
      * terminal nodes which can be used during play-out. It collects all data to evaluate the children batched.
      *
-     * @param context Ludii's context of the current game position
-     * @param maybeLegalMoves Moves which can be legal
-     * @param p Current player to move
+     * @param context           Ludii's context of the current game position
+     * @param maybeLegalMoves   Moves which can be legal
+     * @param p                 Current player to move
      * @param isMoveReallyLegal Function to check if move is really legal for given game
      * @return Best move according to GameStateEvaluators
      */

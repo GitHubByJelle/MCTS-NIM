@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * It combines the number of visits with average win rate found, as proposed in:
  * Winands, M. H., Björnsson, Y., & Saito, J. T. (2008, September). Monte-Carlo tree search solver. In
  * International Conference on Computers and Games (pp. 25-36). Springer, Berlin, Heidelberg.
- *
+ * <p>
  * Based on Ludii implementation
  */
 public class SecureChild implements FinalMoveSelectionStrategy {
@@ -28,21 +28,21 @@ public class SecureChild implements FinalMoveSelectionStrategy {
     /**
      * Constructor without any inputs, A value of 1 is used.
      */
-    public SecureChild(){
+    public SecureChild() {
         this(1);
     }
 
     /**
      * Constructor without A as input.
      */
-    public SecureChild(int A){
+    public SecureChild(int A) {
         this.A = A;
     }
 
     /**
      * Selects the most secure child for the root node of the "actual" current game position
      *
-     * @param mcts Ludii's mcts class
+     * @param mcts     Ludii's mcts class
      * @param rootNode Node of the "actual" current game position
      * @return Move that is most "secure"
      */
@@ -57,7 +57,7 @@ public class SecureChild implements FinalMoveSelectionStrategy {
         double unvisitedValueEstimate = Double.NEGATIVE_INFINITY;
 
         // Look for all children which child is most secure with a random tie-breakers
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             BaseNode child = rootNode.childForNthLegalMove(i);
             double value;
             if (child == null) {
@@ -83,8 +83,7 @@ public class SecureChild implements FinalMoveSelectionStrategy {
         return rootNode.childForNthLegalMove(bestIdx).parentMove();
     }
 
-    public void customise(final String[] inputs)
-    {
+    public void customise(final String[] inputs) {
         // Do nothing
     }
 }

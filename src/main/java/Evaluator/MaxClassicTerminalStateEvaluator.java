@@ -3,7 +3,9 @@ package Evaluator;
 import other.RankUtils;
 import other.context.Context;
 
-/** Generates a terminal state evaluator that returns 9999999 for a win, 0 for a draw and -9999999 for a loss   */
+/**
+ * Generates a terminal state evaluator that returns 9999999 for a win, 0 for a draw and -9999999 for a loss
+ */
 public class MaxClassicTerminalStateEvaluator extends GameStateEvaluator {
 
     /**
@@ -16,7 +18,7 @@ public class MaxClassicTerminalStateEvaluator extends GameStateEvaluator {
      * Evaluates the current terminal state with a 9999999, 0 or -9999999 for a win, draw or loss for the
      * maximising player, respectively. If the game state isn't terminal, a 0 is returned.
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return A float value indicating how good the game state is (higher is better)
      */

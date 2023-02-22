@@ -13,6 +13,7 @@ import java.util.Properties;
 public class Pretraining {
     /**
      * Main class to pretrain a Neural network based on the configuration in the .properties file
+     *
      * @param args All inputs for pretraining. A .proporties file with the following inputs is expected
      *             (see configurations/templatePretraining.proporties):
      *             String gameName: Name of the game (as used by Ludii)
@@ -21,14 +22,14 @@ public class Pretraining {
      *             float learningRate: The learning rate during training
      *             int numSamples: Number of samples (game position / pairs) to create (size of the created dataset)
      *             int patienceData: Maximum number of times the game position generator needs to create a new random
-     *                               board before terminating (since the created game position already exists)
+     *             board before terminating (since the created game position already exists)
      *             String dataPath: Path to pre-generated dataset to use (optionally)
      *             boolean saveData: Indicates if data should be saved after being generated
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         // Check if os is Linux (server), if so use both GPU
-        if (System.getProperty("os.name") == "Linux"){
+        if (System.getProperty("os.name") == "Linux") {
             CudaEnvironment.getInstance().getConfiguration().allowMultiGPU(true);
         }
 

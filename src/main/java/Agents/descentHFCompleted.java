@@ -21,7 +21,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import static utils.CompletedMove.*;
 import static utils.descentUtils.finalMoveSelection;
 
-/** Selects the best move to play based by using Ludii's heuristic evaluation function in
+/**
+ * Selects the best move to play based by using Ludii's heuristic evaluation function in
  * combination with completed descent as proposed in Cohen-Solal, Q. (2020). Learning to play two-player
  * perfect-information games without knowledge. arXiv preprint arXiv:2008.01188. The "completion" adds a solver
  * to the search. Please note, the evaluations aren't batched, which can result in low number of iterations when
@@ -29,34 +30,54 @@ import static utils.descentUtils.finalMoveSelection;
  */
 public class descentHFCompleted extends AI {
 
-    /** Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.) */
+    /**
+     * Player ID indicating which player this bot is (1 for player 1, 2 for player 2, etc.)
+     */
     protected int player = -1;
 
-    /** Indicates the exploration policy (selection during search) used */
+    /**
+     * Indicates the exploration policy (selection during search) used
+     */
     protected Enums.ExplorationPolicy explorationPolicy;
 
-    /** Indicates the epsilon of epsilon-greedy (when used) */
+    /**
+     * Indicates the epsilon of epsilon-greedy (when used)
+     */
     protected final float explorationEpsilon = .05f;
 
-    /** Transposition Table used to store the nodes with completion */
+    /**
+     * Transposition Table used to store the nodes with completion
+     */
     protected TranspositionTableStampCompleted TT = null;
 
-    /** Number of bits used for primary key of the transposition table */
+    /**
+     * Number of bits used for primary key of the transposition table
+     */
     protected int numBitsPrimaryCode = 12;
 
-    /** Number of iterations performed by the bot during the last search */
+    /**
+     * Number of iterations performed by the bot during the last search
+     */
     protected int iterations;
 
-    /** Indicates the selection policy (selection of final move) used */
+    /**
+     * Indicates the selection policy (selection of final move) used
+     */
     protected Enums.SelectionPolicy selectionPolicy;
 
-    /** GameStateEvaluator used to evaluate non-terminal leaf nodes */
+    /**
+     * GameStateEvaluator used to evaluate non-terminal leaf nodes
+     */
     protected GameStateEvaluator leafEvaluator;
 
-    /** GameStateEvaluator used to evaluate terminal leaf nodes */
+    /**
+     * GameStateEvaluator used to evaluate terminal leaf nodes
+     */
     protected GameStateEvaluator terminalEvaluator;
 
-    /** GameStateEvaluator used to evaluate terminal leaf nodes with 1, 0 or -1 */
+    /**
+     * GameStateEvaluator used to evaluate terminal leaf nodes with 1, 0 or -1
+     */
     protected final ClassicTerminalStateEvaluator classicTerminalStateEvaluator = new ClassicTerminalStateEvaluator();
 
     //-------------------------------------------------------------------------
@@ -74,22 +95,22 @@ public class descentHFCompleted extends AI {
      * Selects and returns an action to play based on descent with completion. The search algorithm evaluates all children
      * individually (which could be a disadvantage when using NNs).
      *
-     * @param game Reference to the game we're playing.
-     * @param context Copy of the context containing the current state of the game
-     * @param MaxSeconds Max number of seconds before a move should be selected.
-     * Values less than 0 mean there is no time limit.
+     * @param game          Reference to the game we're playing.
+     * @param context       Copy of the context containing the current state of the game
+     * @param MaxSeconds    Max number of seconds before a move should be selected.
+     *                      Values less than 0 mean there is no time limit.
      * @param maxIterations Max number of iterations before a move should be selected.
-     * Values less than 0 mean there is no iteration limit.
-     * @param maxDepth Max search depth before a move should be selected.
-     * Values less than 0 mean there is no search depth limit.
+     *                      Values less than 0 mean there is no iteration limit.
+     * @param maxDepth      Max search depth before a move should be selected.
+     *                      Values less than 0 mean there is no search depth limit.
      * @return Preferred move.
      */
     @Override
     public Move selectAction
-            (
-                    final Game game, final Context context, final double MaxSeconds,
-                    final int maxIterations, final int maxDepth
-            ) {
+    (
+            final Game game, final Context context, final double MaxSeconds,
+            final int maxIterations, final int maxDepth
+    ) {
         // Determine maximum iterations and stop time
         long stopTime = (MaxSeconds > 0.0) ? System.currentTimeMillis() + (long) (MaxSeconds * 1000) : Long.MAX_VALUE;
         int maxIts = (maxIterations >= 0) ? maxIterations : Integer.MAX_VALUE;
@@ -126,10 +147,10 @@ public class descentHFCompleted extends AI {
      * Performs single iteration of the completed descent algorithm. The search algorithm evaluates all children
      * individually (which could be a disadvantage when using NNs).
      *
-     * @param context Copy of the context containing the current state of the game
+     * @param context          Copy of the context containing the current state of the game
      * @param maximisingPlayer ID of the player to maximise (always player one)
-     * @param stopTime The time to terminate the iteration
-     * @param depth Current depth of UBFM
+     * @param stopTime         The time to terminate the iteration
+     * @param depth            Current depth of UBFM
      * @return Backpropagated estimated value, indicating how good the position is
      */
     protected float descent_iteration(Context context, final int maximisingPlayer, final long stopTime, int depth) {
@@ -238,8 +259,7 @@ public class descentHFCompleted extends AI {
                 // Save all changes to TT
                 this.TT.store(zobrist, resolution, bestCompletedMove.completion, outputScore,
                         depth - 1, sortedCompletedMoves);
-            }
-            else {
+            } else {
                 outputScore = tableData.value;
             }
         }
@@ -252,7 +272,7 @@ public class descentHFCompleted extends AI {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     @Override

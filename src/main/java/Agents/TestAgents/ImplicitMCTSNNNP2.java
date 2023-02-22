@@ -16,7 +16,9 @@ import search.mcts.playout.RandomPlayout;
 public class ImplicitMCTSNNNP2 extends MCTS {
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
@@ -24,6 +26,7 @@ public class ImplicitMCTSNNNP2 extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string
      * (solver=true, influence estimated value = 0.8, exploration=0.001, QInit=DRAW, 4 threads)
+     *
      * @param pathName Path to the desired neural network
      */
     public ImplicitMCTSNNNP2(String pathName) {
@@ -40,8 +43,9 @@ public class ImplicitMCTSNNNP2 extends MCTS {
     /**
      * Constructor with the path to the desired neural network as string, the influence of the estimated value,
      * and exploration as input. (solver=true, QInit=DRAW, 4 threads)
-     * @param pathName Path to the desired neural network
-     * @param alpha influence of the estimated value
+     *
+     * @param pathName            Path to the desired neural network
+     * @param alpha               influence of the estimated value
      * @param explorationConstant exploration constant
      */
     public ImplicitMCTSNNNP2(String pathName, float alpha, float explorationConstant) {
@@ -59,7 +63,7 @@ public class ImplicitMCTSNNNP2 extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {

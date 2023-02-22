@@ -9,7 +9,6 @@ import MCTSStrategies.Node.implicitNode;
 import other.state.State;
 import search.mcts.MCTS;
 import search.mcts.nodes.BaseNode;
-import search.mcts.selection.SelectionStrategy;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,7 +20,9 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
 
     //-------------------------------------------------------------------------
 
-    /** Slope of the change of the influence of the estimated value */
+    /**
+     * Slope of the change of the influence of the estimated value
+     */
     protected double slope;
 
     //-------------------------------------------------------------------------
@@ -30,8 +31,8 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
      * Constructor with influence of the implicit minimax value, exploration constant and slope as input
      *
      * @param initialInfluenceEstimatedMinimax Initial influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
-     * @param slope Slope of increase of alpha
+     * @param explorationConstant              Exploration constant
+     * @param slope                            Slope of increase of alpha
      */
     public ImplicitUCTAlphaIncrease(double initialInfluenceEstimatedMinimax, double explorationConstant, double slope) {
         super(initialInfluenceEstimatedMinimax, explorationConstant);
@@ -42,7 +43,7 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT with an increasing alpha
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -51,7 +52,7 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -64,23 +65,23 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
         double estimatedValue;
         int numVisits;
         double alpha;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
                 numVisits = 0;
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
             alpha = this.adjustAlpha(this.influenceEstimatedMinimax, numVisits);
-            double uctValue = (1 - alpha) *  exploit +
+            double uctValue = (1 - alpha) * exploit +
                     alpha * estimatedValue +
                     this.explorationConstant * explore;
 
@@ -105,10 +106,10 @@ public class ImplicitUCTAlphaIncrease extends ImplicitUCT {
      * Adjust alpha to increase over-time
      *
      * @param initialAlpha Initial influence of the estimated values
-     * @param numVisits Number of visits to current node
+     * @param numVisits    Number of visits to current node
      * @return Adjusted alpha
      */
-    protected double adjustAlpha(double initialAlpha, int numVisits){
-        return Math.min(1, initialAlpha + this.slope * numVisits * (1-initialAlpha));
+    protected double adjustAlpha(double initialAlpha, int numVisits) {
+        return Math.min(1, initialAlpha + this.slope * numVisits * (1 - initialAlpha));
     }
 }

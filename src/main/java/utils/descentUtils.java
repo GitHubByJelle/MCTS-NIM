@@ -7,22 +7,19 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-import static utils.Enums.ExplorationPolicy.*;
-import static utils.Enums.SelectionPolicy.SAFEST;
-
 public class descentUtils {
     /**
      * Add to new backpropagated value to the sorted scored move list by only repositioning the explored
      * scored move.
      *
-     * @param move The move made
-     * @param outputScore The new score of the move
-     * @param nbV The number of visitis of the updates move
+     * @param move              The move made
+     * @param outputScore       The new score of the move
+     * @param nbV               The number of visitis of the updates move
      * @param sortedScoredMoves List with sorted scored moves
-     * @param bestIndex Index of the current best move
-     * @param numLegalMoves Number of legal moves
-     * @param mover The player to move
-     * @param maximisingPlayer The maxisimising player (always player one for UBFM)
+     * @param bestIndex         Index of the current best move
+     * @param numLegalMoves     Number of legal moves
+     * @param mover             The player to move
+     * @param maximisingPlayer  The maxisimising player (always player one for UBFM)
      * @return Newly sorted list with all scored moves
      */
     public static List<ScoredMove> addScoreToSortedScoredMoves(Move move, float outputScore, int nbV,
@@ -69,13 +66,13 @@ public class descentUtils {
     /**
      * Get the best action from the sorted scored moves list based on the selected exploration policy
      *
-     * @param scoredMoves List with sorted scored moves
+     * @param scoredMoves   List with sorted scored moves
      * @param numLegalMoves Number of legal moves in current game position
      * @return Index of selected action
      */
     public static int getBestAction(List<ScoredMove> scoredMoves, int numLegalMoves,
-                                Enums.ExplorationPolicy explorationPolicy,
-                                double explorationEpsilon) {
+                                    Enums.ExplorationPolicy explorationPolicy,
+                                    double explorationEpsilon) {
         int indexPicked;
         switch (explorationPolicy) {
             case BEST:
@@ -117,11 +114,11 @@ public class descentUtils {
      * Get the best action to play in the actual game based on the selection policy used
      *
      * @param rootTableData Table from the root node in the transposition table
-     * @param maximising Indicates if the player is maximising
+     * @param maximising    Indicates if the player is maximising
      * @return The best scored move according to the selection policy
      */
     public static ScoredMove finalMoveSelection(TranspositionTableStamp.StampTTData rootTableData,
-                                            Enums.SelectionPolicy selectionPolicy, boolean maximising) {
+                                                Enums.SelectionPolicy selectionPolicy, boolean maximising) {
         switch (selectionPolicy) {
             case BEST:
                 return (ScoredMove) rootTableData.sortedScoredMoves.get(0);

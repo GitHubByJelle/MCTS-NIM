@@ -6,7 +6,6 @@ import MCTSStrategies.Backpropagation.FixedEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Rescaler.Softmax;
 import MCTSStrategies.Selection.ImplicitUCTRescaledExploration6;
-import MCTSStrategies.Selection.ImplicitUCTRescaledExploration8;
 import MCTSStrategies.Selection.UCTRescaledExploration;
 import Training.LearningManager;
 import game.Game;
@@ -15,6 +14,7 @@ import search.mcts.playout.RandomPlayout;
 // Based on ImplicitMCTSNNNPRescaledExploration8
 public class MCTSNNNPRescaledExploration extends MCTS {
     String pathName;
+
     public MCTSNNNPRescaledExploration(String pathName) {
         super(new UCTRescaledExploration(2, new Softmax()),
                 new RandomPlayout(0),

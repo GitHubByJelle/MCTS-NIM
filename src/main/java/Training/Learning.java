@@ -30,6 +30,7 @@ import java.util.Properties;
 public class Learning {
     /**
      * Main class to pretrain a Neural network based on the configuration in the .properties file
+     *
      * @param args All inputs for pretraining. A .proporties file with the following inputs is expected
      *             (see configurations/templateTraining.proporties):
      *             String agentClass: Name of the class of the agent that is used as search algorithm
@@ -51,7 +52,7 @@ public class Learning {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         // Check if os is Linux (server), if so use both GPU
-        if (System.getProperty("os.name") == "Linux"){
+        if (System.getProperty("os.name") == "Linux") {
             CudaEnvironment.getInstance().getConfiguration().allowMultiGPU(true);
         }
 
@@ -91,7 +92,7 @@ public class Learning {
         // Initialize neural network
         MultiLayerNetwork net;
         // Initialize new one
-        if (startingNetwork == null){
+        if (startingNetwork == null) {
             net = LearningManager.createNetwork(game, NetworkType.Cohen, learningRate);
 
             System.out.println("Created new network:");
@@ -99,14 +100,14 @@ public class Learning {
         }
         // Reload given model
         else {
-            net = LearningManager.loadNetwork(startingNetwork,true);
+            net = LearningManager.loadNetwork(startingNetwork, true);
 
             System.out.println("Loaded network from " + startingNetwork + ":");
             System.out.println(net.summary());
         }
 
         // Set train data history (if given)
-        if (trainDataHistoryPath != null){
+        if (trainDataHistoryPath != null) {
             learningManager.loadTrainData(trainDataHistoryPath);
         }
 
@@ -146,15 +147,13 @@ public class Learning {
                 TTTraining.allocate();
                 for (int p = 1; p < agents.size(); ++p) {
                     agents.get(p).initAI(game, p);
-                    if (agents.get(p) instanceof NNBot){
-                        ((NNBot)agents.get(p)).setTTTraining(TTTraining);
-                        ((NNBot)agents.get(p)).setDataSelection(dataSelection);
-                    }
-                    else if (agents.get(p) instanceof MCTSTraining){
-                        ((MCTSTraining)agents.get(p)).setTTTraining(TTTraining);
-                        ((MCTSTraining)agents.get(p)).setDataSelection(dataSelection);
-                    }
-                    else {
+                    if (agents.get(p) instanceof NNBot) {
+                        ((NNBot) agents.get(p)).setTTTraining(TTTraining);
+                        ((NNBot) agents.get(p)).setDataSelection(dataSelection);
+                    } else if (agents.get(p) instanceof MCTSTraining) {
+                        ((MCTSTraining) agents.get(p)).setTTTraining(TTTraining);
+                        ((MCTSTraining) agents.get(p)).setDataSelection(dataSelection);
+                    } else {
                         throw new RuntimeException("Only use bots of NNBot or MCTSTraining for Learning");
                     }
                 }
@@ -182,10 +181,10 @@ public class Learning {
                 }
 
                 // Save data
-                if (agents.get(1) instanceof NNBot){
+                if (agents.get(1) instanceof NNBot) {
                     learningManager.saveData(TTTraining, context, (NNBot) agents.get(1), gameIndex, numGame, numGamesPerIter,
                             (float) RankUtils.utilities(context)[1], boardSize);
-                } else if (agents.get(1) instanceof MCTSTraining){
+                } else if (agents.get(1) instanceof MCTSTraining) {
                     learningManager.saveData(TTTraining, context, (MCTSTraining) agents.get(1), gameIndex, numGame, numGamesPerIter,
                             (float) RankUtils.utilities(context)[1], boardSize);
                 }
@@ -208,11 +207,11 @@ public class Learning {
         // Save network
         learningManager.saveFinalModel(net,
                 "Network_" +
-                "bSize" + batchSize + "_" +
-                "nEp" + nEpochs + "_" +
-                "nGa" + gameIndex + "_" +
-                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date())+
-                ".bin",
+                        "bSize" + batchSize + "_" +
+                        "nEp" + nEpochs + "_" +
+                        "nGa" + gameIndex + "_" +
+                        new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) +
+                        ".bin",
                 true);
     }
 }

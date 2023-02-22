@@ -15,19 +15,19 @@ import other.context.Context;
 import other.move.Move;
 import other.state.State;
 import other.trial.Trial;
-import training.expert_iteration.ExItExperience;
 import utils.Enums;
-import utils.TranspositionTableLearning;
 import utils.data_structures.transposition_table.TranspositionTable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Implementation of Ludii's alpha-beta search. Assumes perfect-information games.
  * Uses iterative deepening when time-restricted, goes straight for
  * depth limit when only depth-limited. Extracts heuristics to use from game's metadata.
- *
+ * <p>
  * Adapted to work with all implemented GameStateEvaluators. Please note, the evaluations aren't batched, which can
  * result in low number of iterations when using a neural network. It is implemented
  * to additionally store the trainings data found after searching. This allows the search algorithm to be used in the
@@ -39,61 +39,99 @@ public class AlphaBetaSearchNNTraining extends NNBot {
 
     //-------------------------------------------------------------------------
 
-    /** We'll automatically return our move after at most this number of seconds if we only have one move */
+    /**
+     * We'll automatically return our move after at most this number of seconds if we only have one move
+     */
     protected double autoPlaySeconds = 0.0;
 
-    /** Estimated score of the root node based on last-run search */
+    /**
+     * Estimated score of the root node based on last-run search
+     */
     protected float estimatedRootScore = 0.f;
 
-    /** The maximum heuristic eval we have ever observed */
+    /**
+     * The maximum heuristic eval we have ever observed
+     */
     protected float maxHeuristicEval = 0.f;
 
-    /** The minimum heuristic eval we have ever observed */
+    /**
+     * The minimum heuristic eval we have ever observed
+     */
     protected float minHeuristicEval = 0.f;
 
-    /** String to print to Analysis tab of the Ludii app */
+    /**
+     * String to print to Analysis tab of the Ludii app
+     */
     protected String analysisReport = null;
 
-    /** Current list of moves available in root */
+    /**
+     * Current list of moves available in root
+     */
     protected FastArrayList<Move> currentRootMoves = null;
 
-    /** The last move we returned. Need to memorise this for Expert Iteration with AlphaBeta */
+    /**
+     * The last move we returned. Need to memorise this for Expert Iteration with AlphaBeta
+     */
     protected Move lastReturnedMove = null;
 
-    /** Root context for which we've last performed a search */
+    /**
+     * Root context for which we've last performed a search
+     */
     protected Context lastSearchedRootContext = null;
 
-    /** Value estimates of moves available in root */
+    /**
+     * Value estimates of moves available in root
+     */
     protected FVector rootValueEstimates = null;
 
-    /** The number of players in the game we're currently playing */
+    /**
+     * The number of players in the game we're currently playing
+     */
     protected int numPlayersInGame = 0;
 
-    /** Remember if we proved a win in one of our searches */
+    /**
+     * Remember if we proved a win in one of our searches
+     */
     protected boolean provedWin = false;
 
-    /** Needed for visualisations */
+    /**
+     * Needed for visualisations
+     */
     protected float rootAlphaInit = -1.0F;
 
-    /** Needed for visualisations */
+    /**
+     * Needed for visualisations
+     */
     protected float rootBetaInit = 1.0F;
 
-    /** Sorted (hopefully cleverly) list of moves available in root node */
+    /**
+     * Sorted (hopefully cleverly) list of moves available in root node
+     */
     protected FastArrayList<Move> sortedRootMoves = null;
 
-    /** If true at end of a search, it means we searched full tree (probably proved a draw) */
+    /**
+     * If true at end of a search, it means we searched full tree (probably proved a draw)
+     */
     protected boolean searchedFullTree = false;
 
-    /** Do we want to allow using Transposition Table? */
+    /**
+     * Do we want to allow using Transposition Table?
+     */
     protected boolean allowTranspositionTable = true;
 
-    /** Transposition Table */
+    /**
+     * Transposition Table
+     */
     protected TranspositionTable transpositionTable = null;
 
-    /** Do we allow any search depth, or only odd, or only even? */
+    /**
+     * Do we allow any search depth, or only odd, or only even?
+     */
     protected AllowedSearchDepths allowedSearchDepths;
 
-    /** Number of iterations performed by the bot during the last search */
+    /**
+     * Number of iterations performed by the bot during the last search
+     */
     private int iterations;
 
     //-------------------------------------------------------------------------
@@ -112,14 +150,14 @@ public class AlphaBetaSearchNNTraining extends NNBot {
      * Selects and returns an action to play based on Iterative Deepening. The search algorithm evaluates all children
      * individually (which could be a disadvantage when using NNs).
      *
-     * @param game Reference to the game we're playing.
-     * @param context Copy of the context containing the current state of the game
-     * @param maxSeconds Max number of seconds before a move should be selected.
-     * Values less than 0 mean there is no time limit.
+     * @param game          Reference to the game we're playing.
+     * @param context       Copy of the context containing the current state of the game
+     * @param maxSeconds    Max number of seconds before a move should be selected.
+     *                      Values less than 0 mean there is no time limit.
      * @param maxIterations Max number of iterations before a move should be selected.
-     * Values less than 0 mean there is no iteration limit.
-     * @param maxDepth Max search depth before a move should be selected.
-     * Values less than 0 mean there is no search depth limit.
+     *                      Values less than 0 mean there is no iteration limit.
+     * @param maxDepth      Max search depth before a move should be selected.
+     *                      Values less than 0 mean there is no search depth limit.
      * @return Preferred move.
      */
     public Move selectAction(Game game, Context context, double maxSeconds, int maxIterations, int maxDepth) {
@@ -144,12 +182,12 @@ public class AlphaBetaSearchNNTraining extends NNBot {
     /**
      * Runs iterative deepening alpha-beta
      *
-     * @param game Reference to the game we're playing.
-     * @param context Copy of the context containing the current state of the game
+     * @param game       Reference to the game we're playing.
+     * @param context    Copy of the context containing the current state of the game
      * @param maxSeconds Max number of seconds before a move should be selected.
-     * Values less than 0 mean there is no time limit.
-     * @param maxDepth Max search depth before a move should be selected.
-     * Values less than 0 mean there is no search depth limit.
+     *                   Values less than 0 mean there is no time limit.
+     * @param maxDepth   Max search depth before a move should be selected.
+     *                   Values less than 0 mean there is no search depth limit.
      * @param startDepth The initial search depth
      * @return Preferred move.
      */
@@ -318,12 +356,12 @@ public class AlphaBetaSearchNNTraining extends NNBot {
     /**
      * Recursive alpha-beta search function, while also store the storing the trainings data found after searching
      *
-     * @param context Copy of the context containing the current state of the game
-     * @param depth Current search depth
-     * @param inAlpha Current lower bound of search
-     * @param inBeta Current upper bound of search
+     * @param context          Copy of the context containing the current state of the game
+     * @param depth            Current search depth
+     * @param inAlpha          Current lower bound of search
+     * @param inBeta           Current upper bound of search
      * @param maximisingPlayer Who is the maximising player?
-     * @param stopTime Time to terminate the search
+     * @param stopTime         Time to terminate the search
      * @return evaluation of the reached state, from perspective of maximising player.
      */
     public float alphaBeta(Context context, int depth, float inAlpha, float inBeta, int maximisingPlayer, long stopTime) {
@@ -436,7 +474,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
                                 this.transpositionTable.store(bestMove, zobrist, score, depth, (byte) 1);
                             }
 
-                            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                                 this.TTTraining.store(zobrist, score, depth,
                                         this.leafEvaluator.boardToInput(context).data().asFloat());
                             }
@@ -482,7 +520,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
                                 this.transpositionTable.store(bestMove, zobrist, score, depth, (byte) 1);
                             }
 
-                            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+                            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                                 this.TTTraining.store(zobrist, score, depth,
                                         this.leafEvaluator.boardToInput(context).data().asFloat());
                             }
@@ -495,7 +533,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
         } else {
             // Terminal evaluation
             float score = this.terminalEvaluator.evaluate(context, 1);
-            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE){
+            if (depth == 0 || this.dataSelection == Enums.DataSelection.TREE) {
                 this.TTTraining.store(zobrist, score, depth,
                         this.leafEvaluator.boardToInput(context).data().asFloat());
             }
@@ -508,7 +546,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
      *
      * @param score Score found by AlphaBetaSearch
      * @param alpha Lower bound of search
-     * @param beta Upper bound of search
+     * @param beta  Upper bound of search
      * @return Value estimate in [-1, 1] from unbounded (heuristic) score.
      */
     public double scoreToValueEst(float score, float alpha, float beta) {
@@ -523,7 +561,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
      * Perform desired initialisation before starting to play a game
      * Set the playerID, initialise a new Transposition Table and initialise both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {
@@ -571,6 +609,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
 
     /**
      * Calls the scoreToValueEst function for the current root node
+     *
      * @return A value estimate in [-1, 1] for the current root node
      */
     public double estimateValue() {
@@ -579,6 +618,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
 
     /**
      * Getter for the analysis report
+     *
      * @return String representing the analysis report
      */
     public String generateAnalysisReport() {
@@ -587,6 +627,7 @@ public class AlphaBetaSearchNNTraining extends NNBot {
 
     /**
      * Creates visualisation data for Ludii
+     *
      * @return visualisation data
      */
     public AIVisualisationData aiVisualisationData() {
@@ -605,13 +646,18 @@ public class AlphaBetaSearchNNTraining extends NNBot {
      * @author Dennis Soemers
      */
     protected class ScoredMove implements Comparable<ScoredMove> {
-        /** The move */
+        /**
+         * The move
+         */
         public final Move move;
-        /** The move's score */
+        /**
+         * The move's score
+         */
         public final float score;
 
         /**
          * Constructor
+         *
          * @param move
          * @param score
          */

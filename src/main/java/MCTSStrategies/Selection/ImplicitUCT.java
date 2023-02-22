@@ -5,13 +5,13 @@
 
 package MCTSStrategies.Selection;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import MCTSStrategies.Node.implicitNode;
 import other.state.State;
 import search.mcts.MCTS;
 import search.mcts.nodes.BaseNode;
 import search.mcts.selection.SelectionStrategy;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Selection strategy which selects the child based on a combination of UCT and minimax backpropagated values.
@@ -23,10 +23,14 @@ public class ImplicitUCT implements SelectionStrategy {
 
     //-------------------------------------------------------------------------
 
-    /** Exploration constant */
+    /**
+     * Exploration constant
+     */
     protected double explorationConstant;
 
-    /** Influence of the implicit minimax value */
+    /**
+     * Influence of the implicit minimax value
+     */
     protected double influenceEstimatedMinimax;
 
     //-------------------------------------------------------------------------
@@ -42,7 +46,7 @@ public class ImplicitUCT implements SelectionStrategy {
      * Constructor with influence of the implicit minimax value and exploration constant as input
      *
      * @param influenceEstimatedMinimax Influence of the implicit minimax value
-     * @param explorationConstant Exploration constant
+     * @param explorationConstant       Exploration constant
      */
     public ImplicitUCT(double influenceEstimatedMinimax, double explorationConstant) {
         this.explorationConstant = explorationConstant;
@@ -52,7 +56,7 @@ public class ImplicitUCT implements SelectionStrategy {
     /**
      * Selects the index of a child of the current node to traverse to based on implicit UCT
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param current node representing the current game state
      * @return The index of next "best" move
      */
@@ -61,7 +65,7 @@ public class ImplicitUCT implements SelectionStrategy {
         int bestIdx = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
         int numBestFound = 0;
-        double parentLog = Math.log((double)Math.max(1, current.sumLegalChildVisits()));
+        double parentLog = Math.log((double) Math.max(1, current.sumLegalChildVisits()));
         int numChildren = current.numLegalMoves();
         State state = current.contextRef().state();
         int moverAgent = state.playerToAgent(state.mover());
@@ -72,21 +76,21 @@ public class ImplicitUCT implements SelectionStrategy {
         double exploit;
         double explore;
         double estimatedValue;
-        for(int i = 0; i < numChildren; ++i) {
+        for (int i = 0; i < numChildren; ++i) {
             implicitNode child = (implicitNode) current.childForNthLegalMove(i);
             if (child == null) {
                 exploit = unvisitedValueEstimate;
                 explore = Math.sqrt(parentLog);
-                estimatedValue = ((implicitNode)current).getInitialEstimatedValue(i); // Own perspective
+                estimatedValue = ((implicitNode) current).getInitialEstimatedValue(i); // Own perspective
             } else {
                 exploit = child.exploitationScore(moverAgent);
                 int numVisits = child.numVisits() + child.numVirtualVisits();
-                explore = Math.sqrt(parentLog / (double)numVisits);
+                explore = Math.sqrt(parentLog / (double) numVisits);
                 estimatedValue = moverAgent == child.contextRef().state().playerToAgent(child.contextRef().state().mover()) ?
                         child.getBestEstimatedValue() : -child.getBestEstimatedValue(); // Switch if opponent is in other perspective
             }
 
-            double uctValue = (1 - this.influenceEstimatedMinimax) *  exploit +
+            double uctValue = (1 - this.influenceEstimatedMinimax) * exploit +
                     this.influenceEstimatedMinimax * estimatedValue +
                     this.explorationConstant * explore;
 
@@ -136,7 +140,7 @@ public class ImplicitUCT implements SelectionStrategy {
      */
     public void customise(String[] inputs) {
         if (inputs.length > 1) {
-            for(int i = 1; i < inputs.length; ++i) {
+            for (int i = 1; i < inputs.length; ++i) {
                 String input = inputs[i];
                 if (input.startsWith("explorationconstant=")) {
                     this.explorationConstant = Double.parseDouble(input.substring("explorationconstant=".length()));

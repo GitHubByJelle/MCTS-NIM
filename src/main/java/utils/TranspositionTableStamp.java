@@ -5,7 +5,6 @@
 
 package utils;
 
-import search.mcts.MCTS;
 import utils.data_structures.ScoredMove;
 
 import java.util.ArrayList;
@@ -16,26 +15,36 @@ import java.util.List;
  * Transposition Table which can be used when implementing Best-First search implementations.
  * Instead of deleting the entire TT (and tree), this implementation only removes the
  * "old" entries, which haven't been seen for the last few searches based on a stamp.
- *
+ * <p>
  * Based on implementation from Ludii
  */
 public class TranspositionTableStamp {
 
     //-------------------------------------------------------------------------
 
-    /** Number of bits used for primary key */
+    /**
+     * Number of bits used for primary key
+     */
     protected final int numBitsPrimaryCode;
 
-    /** Number of entries in the TT (size of TT is 2^number of bits)*/
+    /**
+     * Number of entries in the TT (size of TT is 2^number of bits)
+     */
     protected final int maxNumEntries;
 
-    /** Table which stores all Transposition entries */
+    /**
+     * Table which stores all Transposition entries
+     */
     private StampTTEntry[] table;
 
-    /** Current stamp that keeps track of the visits of the data */
+    /**
+     * Current stamp that keeps track of the visits of the data
+     */
     protected int stamp;
 
-    /** Number of games the data will be kept after being seen for the last time */
+    /**
+     * Number of games the data will be kept after being seen for the last time
+     */
     protected int offSet = 3;
 
     //-------------------------------------------------------------------------
@@ -68,6 +77,7 @@ public class TranspositionTableStamp {
 
     /**
      * Checks if a table is allocated
+     *
      * @return True if a tables is allocated, false otherwise
      */
     public boolean isAllocated() {
@@ -168,9 +178,9 @@ public class TranspositionTableStamp {
     /**
      * Stores the given information into the transposition table
      *
-     * @param fullHash hash code to store
-     * @param value Value which needs to be stored (value found after searching)
-     * @param depth Search depth of hash
+     * @param fullHash          hash code to store
+     * @param value             Value which needs to be stored (value found after searching)
+     * @param depth             Search depth of hash
      * @param sortedScoredMoves List with sorted scored moves
      */
     public void store(long fullHash, float value, int depth, List<ScoredMove> sortedScoredMoves) {
@@ -203,6 +213,7 @@ public class TranspositionTableStamp {
 
     /**
      * Count number of entries in the Transposition Table
+     *
      * @return the number of entries
      */
     public int nbEntries() {
@@ -219,14 +230,16 @@ public class TranspositionTableStamp {
 
     /**
      * Class for all entries in the Transposition Table, existing of TTData
-     *
+     * <p>
      * Based on implementation from Ludii
      */
     public static final class StampTTEntry {
 
         //-------------------------------------------------------------------------
 
-        /** List of Transposition Table Data of a single full hash code */
+        /**
+         * List of Transposition Table Data of a single full hash code
+         */
         public List<StampTTData> data = new ArrayList(3);
 
         //-------------------------------------------------------------------------
@@ -245,29 +258,39 @@ public class TranspositionTableStamp {
 
         //-------------------------------------------------------------------------
 
-        /** Full hash code */
+        /**
+         * Full hash code
+         */
         public long fullHash = -1L;
 
-        /** Value found after searching */
+        /**
+         * Value found after searching
+         */
         public float value = Float.NaN;
 
-        /** Search depth of the full hash code */
+        /**
+         * Search depth of the full hash code
+         */
         public int depth = -1;
 
-        /** Sorted list with all scored moves (all legal moves in the game position) */
+        /**
+         * Sorted list with all scored moves (all legal moves in the game position)
+         */
         public List<ScoredMove> sortedScoredMoves = null;
 
-        /** Current stamp of the search */
+        /**
+         * Current stamp of the search
+         */
         protected int stamp;
 
         /**
          * Constructor to create the Transposition Table Data with stamp
          *
-         * @param fullHash Full hash code
-         * @param value Value found after searching
-         * @param depth Search depth of the full hash code
+         * @param fullHash          Full hash code
+         * @param value             Value found after searching
+         * @param depth             Search depth of the full hash code
          * @param sortedScoredMoves Sorted list with all scored moves (all legal moves in the game position)
-         * @param stamp Current stamp of the search
+         * @param stamp             Current stamp of the search
          */
         public StampTTData(long fullHash, float value, int depth, List<ScoredMove> sortedScoredMoves, int stamp) {
             this.fullHash = fullHash;

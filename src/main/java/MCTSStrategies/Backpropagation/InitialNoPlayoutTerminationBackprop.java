@@ -11,7 +11,6 @@ import other.move.Move;
 import search.mcts.MCTS;
 import search.mcts.backpropagation.BackpropagationStrategy;
 import search.mcts.nodes.BaseNode;
-import utils.Value;
 
 // Backpropagates the value of the evaluation function after a fixed number of steps
 // PLEASE NOTE: ASSUMPTION IS MADE OF TWO PLAYERS (can save a lot of time when using NN as leaf evaluator)
@@ -31,11 +30,11 @@ public class InitialNoPlayoutTerminationBackprop extends BackpropagationStrategy
      * Extracts the array of utilities that we want to backpropagate.
      * Instead of returning a win or loss it returns the estimated value of the context of the last encountered node
      *
-     * @param mcts Ludii's mcts base class
-     * @param startNode The last seen node during the play-out
-     * @param context Ludii's context
-     * @param utilities Initial utilities value indicating null, the terminal value for player 1, and the terminal
-     *                  value for player 2
+     * @param mcts            Ludii's mcts base class
+     * @param startNode       The last seen node during the play-out
+     * @param context         Ludii's context
+     * @param utilities       Initial utilities value indicating null, the terminal value for player 1, and the terminal
+     *                        value for player 2
      * @param numPlayoutMoves Number of moves made in play-out
      */
     public void computeUtilities(MCTS mcts, BaseNode startNode, Context context, double[] utilities, int numPlayoutMoves) {
@@ -53,8 +52,8 @@ public class InitialNoPlayoutTerminationBackprop extends BackpropagationStrategy
             // initial estimated value of the node
             int numChildren = parentNode.numLegalMoves();
             for (int i = 0; i < numChildren; i++) {
-                if (parentNode.childForNthLegalMove(i) == startNode){
-                    value = ((implicitNode)parentNode).getInitialEstimatedValue(i) * multiplier;
+                if (parentNode.childForNthLegalMove(i) == startNode) {
+                    value = ((implicitNode) parentNode).getInitialEstimatedValue(i) * multiplier;
                     break;
                 }
             }

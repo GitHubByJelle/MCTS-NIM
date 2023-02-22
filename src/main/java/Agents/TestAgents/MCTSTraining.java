@@ -1,6 +1,9 @@
 package Agents;
 
-import Evaluator.*;
+import Evaluator.ClassicTerminalStateEvaluator;
+import Evaluator.GameStateEvaluator;
+import Evaluator.MultiNeuralNetworkLeafEvaluator;
+import Evaluator.NeuralNetworkLeafEvaluator;
 import MCTSStrategies.Wrapper.TrainingPlayoutWrapper;
 import MCTSStrategies.Wrapper.TrainingSelectionWrapper;
 import game.Game;
@@ -31,23 +34,24 @@ public class MCTSTraining extends MCTS {
     /**
      * Constructor requiring the architecture as input
      *
-     * @param selectionStrategy The used selection strategy
-     * @param playoutStrategy The used play-out strategy
-     * @param backpropagationStrategy The used backpropagation strategy
+     * @param selectionStrategy          The used selection strategy
+     * @param playoutStrategy            The used play-out strategy
+     * @param backpropagationStrategy    The used backpropagation strategy
      * @param finalMoveSelectionStrategy The used final move selection strategy
-     * @param net MultiLayerNetwork (DeepLearning4J) used for training
+     * @param net                        MultiLayerNetwork (DeepLearning4J) used for training
      */
     public MCTSTraining(SelectionStrategy selectionStrategy,
                         PlayoutStrategy playoutStrategy,
                         BackpropagationStrategy backpropagationStrategy,
                         FinalMoveSelectionStrategy finalMoveSelectionStrategy,
-                        MultiLayerNetwork net){
+                        MultiLayerNetwork net) {
         super(selectionStrategy, playoutStrategy, backpropagationStrategy, finalMoveSelectionStrategy);
         this.net = net;
     }
 
     /**
      * Setter for the Transposition Table used for storing the trainings data to all required objects
+     *
      * @param tt Transposition Table used for storing the trainings data
      */
     public void setTTTraining(TranspositionTableLearning tt) {
@@ -55,20 +59,20 @@ public class MCTSTraining extends MCTS {
         this.TTTraining = tt;
 
         // Saves to final move selection (to save all nodes before playing the actual move)
-        if (this.finalMoveSelectionStrategy instanceof TrainingSelectionWrapper){
-            ((TrainingSelectionWrapper)this.finalMoveSelectionStrategy).setTTTraining(tt);
-        }
-        else
+        if (this.finalMoveSelectionStrategy instanceof TrainingSelectionWrapper) {
+            ((TrainingSelectionWrapper) this.finalMoveSelectionStrategy).setTTTraining(tt);
+        } else
             throw new RuntimeException("Final move selection doesn't contain " + TrainingSelectionWrapper.class.getName());
 
         // Saves to playout (when performing a pay-out)
-        if (this.playoutStrategy instanceof TrainingPlayoutWrapper){
-            ((TrainingPlayoutWrapper)this.playoutStrategy).setTTTraining(tt);
+        if (this.playoutStrategy instanceof TrainingPlayoutWrapper) {
+            ((TrainingPlayoutWrapper) this.playoutStrategy).setTTTraining(tt);
         }
     }
 
     /**
      * Getter for the Transposition Table used for storing the trainings data
+     *
      * @return Transposition Table used for storing the trainings data
      */
     public TranspositionTableLearning getTTTraining() {
@@ -77,22 +81,23 @@ public class MCTSTraining extends MCTS {
 
     /**
      * Setter for the enum for the data selection strategy used from the descent framework
+     *
      * @param dataSelection Enum for the data selection strategy used from the descent framework
      */
     public void setDataSelection(Enums.DataSelection dataSelection) {
         this.dataSelection = dataSelection;
-        if (this.finalMoveSelectionStrategy instanceof TrainingSelectionWrapper){
-            ((TrainingSelectionWrapper)this.finalMoveSelectionStrategy).setDataSelection(dataSelection);
-        }
-        else
+        if (this.finalMoveSelectionStrategy instanceof TrainingSelectionWrapper) {
+            ((TrainingSelectionWrapper) this.finalMoveSelectionStrategy).setDataSelection(dataSelection);
+        } else
             throw new RuntimeException("Final move selection doesn't contain " + TrainingSelectionWrapper.class.getName());
     }
 
     /**
      * Adds the final (terminal) state of an actual game to the Transposition Table with trainings data
+     *
      * @param terminalContext Ludii's context class representing a final terminal game position of the actual game
      */
-    public void addTerminalStateToTT(Context terminalContext){
+    public void addTerminalStateToTT(Context terminalContext) {
         INDArray inputNN = this.leafEvaluator.boardToInput(terminalContext);
         float outputScore = this.terminalEvaluator.evaluate(terminalContext, 1);
         long zobrist = terminalContext.state().fullHash(terminalContext);
@@ -102,7 +107,7 @@ public class MCTSTraining extends MCTS {
     /**
      * Perform desired initialisation before starting to play a game
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {
@@ -119,7 +124,7 @@ public class MCTSTraining extends MCTS {
      * Never stop searching when learning, since all data can be used for learning
      *
      * @param rootThisCall Root node of current call
-     * @param mover ID of the player to move
+     * @param mover        ID of the player to move
      * @return True if the search should terminate the search early
      */
     @Override

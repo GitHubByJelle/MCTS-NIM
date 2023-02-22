@@ -1,13 +1,8 @@
 package Evaluator;
 
 import game.Game;
-import main.collections.ChunkSet;
-import main.collections.FastArrayList;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 import other.context.Context;
-import other.move.Move;
 
 import java.util.ArrayList;
 
@@ -21,10 +16,14 @@ public class MultiNeuralNetworkLeafEvaluator extends NeuralNetworkLeafEvaluator 
 
     //-------------------------------------------------------------------------
 
-    /** Number of threads that require their own NN evaluator */
+    /**
+     * Number of threads that require their own NN evaluator
+     */
     private final int nThreads;
 
-    /** Array of NN evaluators for all threads */
+    /**
+     * Array of NN evaluators for all threads
+     */
     private final NeuralNetworkLeafEvaluator[] evaluators;
 
     //-------------------------------------------------------------------------
@@ -32,9 +31,9 @@ public class MultiNeuralNetworkLeafEvaluator extends NeuralNetworkLeafEvaluator 
     /**
      * Constructor with the game, neural network and number of threads as input
      *
-     * @param game Ludii's game
-     * @param net DL4J MultiLayerNetwork that needs to be used (can be loaded with the LearningManager).
-     *            The network should always predict with respect to player 1.
+     * @param game     Ludii's game
+     * @param net      DL4J MultiLayerNetwork that needs to be used (can be loaded with the LearningManager).
+     *                 The network should always predict with respect to player 1.
      * @param nThreads Number of threads that require their own NN evaluator
      */
     public MultiNeuralNetworkLeafEvaluator(Game game, MultiLayerNetwork net, int nThreads) {
@@ -55,12 +54,12 @@ public class MultiNeuralNetworkLeafEvaluator extends NeuralNetworkLeafEvaluator 
      * The first player (playerID = 1) is assumed to be the maximizing player. The estimated value of the second player
      * (playerID = 2) will be multiplied by -1, since the NN always predicts with respect to playerID 1.
      *
-     * @param context Ludii's context of the current game state
+     * @param context          Ludii's context of the current game state
      * @param maximisingPlayer Indicates the playerID of the player to move (either 1 or 2)
      * @return A float value indicating how good the game state is (higher is better)
      */
     public float evaluate(Context context, int maximisingPlayer) {
-        return this.evaluators[(int)(Thread.currentThread().threadId()%this.nThreads)].evaluate(context, maximisingPlayer);
+        return this.evaluators[(int) (Thread.currentThread().threadId() % this.nThreads)].evaluate(context, maximisingPlayer);
     }
 
     /**
@@ -68,14 +67,14 @@ public class MultiNeuralNetworkLeafEvaluator extends NeuralNetworkLeafEvaluator 
      * The first player (playerID = 1) is assumed to be the maximizing player. The estimated value of the second player
      * (playerID = 2) will be multiplied by -1, since the NN always predicts with respect to playerID 1.
      *
-     * @param context Ludii's context of the current game state
+     * @param context          Ludii's context of the current game state
      * @param nonTerminalMoves Index of all moves that are non-terminal (so need to be converted to NN input)
      * @param maximisingPlayer Indicates the playerID of the player to move (either 1 or 2)
      * @return A float array with a value for each non-terminal move indicating how good
-     *         the game state is (higher is better)
+     * the game state is (higher is better)
      */
     public float[] evaluateMoves(Context context, ArrayList<Integer> nonTerminalMoves, int maximisingPlayer) {
-        return this.evaluators[(int)(Thread.currentThread().threadId()%this.nThreads)].
+        return this.evaluators[(int) (Thread.currentThread().threadId() % this.nThreads)].
                 evaluateMoves(context, nonTerminalMoves, maximisingPlayer);
     }
 }

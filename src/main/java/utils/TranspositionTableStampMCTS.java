@@ -5,8 +5,6 @@
 
 package utils;
 
-import utils.data_structures.ScoredMove;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,14 +13,16 @@ import java.util.List;
  * Transposition Table which can be used when implementing algorithms that don't recognize transpositions.
  * Instead of deleting the entire TT (and tree), this implementation only removes the
  * "old" entries, which haven't been seen for the last few searches based on a stamp.
- *
+ * <p>
  * Based on implementation from Ludii
  */
 public class TranspositionTableStampMCTS extends TranspositionTableStamp {
 
     //-------------------------------------------------------------------------
 
-    /** Table which stores all Transposition entries */
+    /**
+     * Table which stores all Transposition entries
+     */
     protected StampTTEntryMCTS[] table;
 
     //-------------------------------------------------------------------------
@@ -93,9 +93,9 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
     /**
      * Stores the given information into the transposition table
      *
-     * @param fullHash hash code to store
+     * @param fullHash     hash code to store
      * @param contextValue Estimated value of context (belonging to hash)
-     * @param moveValues Estimated values of all children (belonging to hash)
+     * @param moveValues   Estimated values of all children (belonging to hash)
      */
     public void store(long fullHash, double contextValue, double[] moveValues) {
         // Get entry based on primary key
@@ -129,7 +129,7 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
      * Stores the given information into the transposition table. It only overwrites the contextValue, but keeps
      * the move values untouched.
      *
-     * @param fullHash hash code to store
+     * @param fullHash     hash code to store
      * @param contextValue Estimated value of context (belonging to hash)
      */
     public void storeContextValue(long fullHash, double contextValue) {
@@ -163,7 +163,7 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
      * Stores the given information into the transposition table. It only overwrites the moveValues, but keeps
      * the contextValue untouched.
      *
-     * @param fullHash hash code to store
+     * @param fullHash   hash code to store
      * @param moveValues Estimated values of all children (belonging to hash)
      */
     public void storeMoveValues(long fullHash, double[] moveValues) {
@@ -194,17 +194,18 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
     }
 
 
-
     /**
      * Class for all entries in the Transposition Table, existing of TTData
-     *
+     * <p>
      * Based on implementation from Ludii
      */
     public static final class StampTTEntryMCTS {
 
         //-------------------------------------------------------------------------
 
-        /** List of Transposition Table Data of a single full hash code */
+        /**
+         * List of Transposition Table Data of a single full hash code
+         */
         public List<StampTTDataMCTS> data = new ArrayList(3);
 
         //-------------------------------------------------------------------------
@@ -223,10 +224,14 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
 
         //-------------------------------------------------------------------------
 
-        /** Best heuristic value from all children */
+        /**
+         * Best heuristic value from all children
+         */
         public double contextValue;
 
-        /** Initial heuristic value (before minimax changes them) */
+        /**
+         * Initial heuristic value (before minimax changes them)
+         */
         public double[] moveValues;
 
         //-------------------------------------------------------------------------
@@ -235,10 +240,10 @@ public class TranspositionTableStampMCTS extends TranspositionTableStamp {
          * Constructor to create the Transposition Table Data with stamp an evaluator which doesn't recognize
          * transpositions.
          *
-         * @param fullHash Full hash code
+         * @param fullHash     Full hash code
          * @param contextValue Estimated value of context (belonging to hash)
-         * @param moveValues Estimated values of all children (belonging to hash)
-         * @param stamp Current stamp of the search
+         * @param moveValues   Estimated values of all children (belonging to hash)
+         * @param stamp        Current stamp of the search
          */
         public StampTTDataMCTS(long fullHash, double contextValue,
                                double[] moveValues, int stamp) {

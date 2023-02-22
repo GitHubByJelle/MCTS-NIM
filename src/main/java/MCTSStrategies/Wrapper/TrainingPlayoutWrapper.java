@@ -17,7 +17,9 @@ public class TrainingPlayoutWrapper implements PlayoutStrategy {
 
     //-------------------------------------------------------------------------
 
-    /** EpsilonGreedyPlayout strategy */
+    /**
+     * EpsilonGreedyPlayout strategy
+     */
     public EpsilonGreedyPlayout playoutStrategy;
 
     //-------------------------------------------------------------------------
@@ -27,14 +29,14 @@ public class TrainingPlayoutWrapper implements PlayoutStrategy {
      *
      * @param playoutStrategy EpsilonGreedyPlayout strategy
      */
-    public TrainingPlayoutWrapper(EpsilonGreedyPlayout playoutStrategy){
+    public TrainingPlayoutWrapper(EpsilonGreedyPlayout playoutStrategy) {
         this.playoutStrategy = playoutStrategy;
     }
 
     /**
      * Runs the play-out based on the EpsilonGreedyPlayout strategy
      *
-     * @param mcts Ludii's MCTS class
+     * @param mcts    Ludii's MCTS class
      * @param context Ludii's context class representing the game position
      * @return Ludii's trial class with after performing the play-out on the given game position
      */
@@ -77,7 +79,7 @@ public class TrainingPlayoutWrapper implements PlayoutStrategy {
     /**
      * Initialises the play-out based on the given play-out strategy
      *
-     * @param game Ludii's game class
+     * @param game     Ludii's game class
      * @param playerID ID of current player
      */
     public void initAI(Game game, int playerID) {
@@ -105,7 +107,7 @@ public class TrainingPlayoutWrapper implements PlayoutStrategy {
     /**
      * Changes the move selector of the given play-out strategy to a batched move selector
      */
-    public void createBatchedMoveSelector(){
+    public void createBatchedMoveSelector() {
         this.playoutStrategy.moveSelector = new TrainerEvaluatedMoveSelector();
     }
 
@@ -116,7 +118,7 @@ public class TrainingPlayoutWrapper implements PlayoutStrategy {
      *
      * @param TT Transposition Table used to store the learning data
      */
-    public void setTTTraining(TranspositionTableLearning TT){
+    public void setTTTraining(TranspositionTableLearning TT) {
         ((TrainerEvaluatedMoveSelector) this.playoutStrategy.moveSelector).setTTTraining(TT);
     }
 }

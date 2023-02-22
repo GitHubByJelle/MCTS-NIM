@@ -11,7 +11,9 @@ public class RandomLeafEvaluator extends GameStateEvaluator {
 
     //-------------------------------------------------------------------------
 
-    /** Randomgenerator to generate pseudorandom numbers */
+    /**
+     * Randomgenerator to generate pseudorandom numbers
+     */
     protected Random rand;
 
     //-------------------------------------------------------------------------
@@ -27,7 +29,7 @@ public class RandomLeafEvaluator extends GameStateEvaluator {
     /**
      * Generates a pseudorandom number (ignoring the context or maximising player)
      *
-     * @param context Ludii's context
+     * @param context          Ludii's context
      * @param maximisingPlayer The maximising player
      * @return A pseudorandom number
      */

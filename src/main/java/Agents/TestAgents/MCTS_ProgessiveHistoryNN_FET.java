@@ -6,13 +6,9 @@ import Evaluator.ParallelNeuralNetworkLeafEvaluator;
 import MCTSStrategies.Backpropagation.FixedEarlyTerminationBackprop;
 import MCTSStrategies.FinalMoveSelection.RobustChild;
 import MCTSStrategies.Selection.ProgressiveHistoryGRAVE;
-import MCTSStrategies.Wrapper.debugFinalSelectionWrapper;
 import Training.LearningManager;
 import game.Game;
-import search.mcts.playout.MAST;
 import search.mcts.playout.RandomPlayout;
-
-import java.util.Random;
 
 /**
  * MCTS implementation with Progressive History and fixed early termination using NNs
@@ -21,13 +17,16 @@ public class MCTS_ProgessiveHistoryNN_FET extends MCTS {
 
     //-------------------------------------------------------------------------
 
-    /** Path to the neural network */
+    /**
+     * Path to the neural network
+     */
     String pathName;
 
     //-------------------------------------------------------------------------
 
     /**
      * Constructor with the path to the desired neural network as string
+     *
      * @param pathName Path to the desired neural network
      */
     public MCTS_ProgessiveHistoryNN_FET(String pathName) {
@@ -47,7 +46,7 @@ public class MCTS_ProgessiveHistoryNN_FET extends MCTS {
      * Perform desired initialisation before starting to play a game
      * Initialise the parent and both GameStateEvaluators
      *
-     * @param game The game that we'll be playing
+     * @param game     The game that we'll be playing
      * @param playerID The player ID for the AI in this game
      */
     public void initAI(Game game, int playerID) {
