@@ -4,6 +4,10 @@ This repository contains an implementation of Monte Carlo Tree Search using Netw
 ## Overview
 MCTS<sub>NIM</sub> is a variation of MCTS that uses implicit minimax backups in combination with a neural network to estimate the value of different game states. The neural networks used by the algorithm are trained using the [descent framework](https://arxiv.org/abs/2008.01188). The implementation is written in Java using [Ludii](https://ludii.games/) and the [DeepLearning4J library](https://deeplearning4j.konduit.ai/). Some minor modifications have been made to a fork of Ludii, which can be found [here](https://github.com/GitHubByJelle/Ludii).
 
+<p align="center" width="100%">
+    <img src="images/mcts-nim.gif" alt="Visualisation of MCTS_NIM playing a game of Breakthrough against Descent using Ludii's heuristic function" width="70%">
+</p>
+
 ## Installation
 All used dependencies can be installed using the `pom.xml` file. Additionally, the modified Ludii can be installed by using the `Ludii-1.3.6-Thesis.jar`.
 
